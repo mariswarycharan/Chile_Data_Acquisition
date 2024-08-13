@@ -7,18 +7,21 @@ import sys
 import concurrent.futures
 from datetime import datetime
 from tqdm import tqdm
-import pandas as pd
+import modin.pandas as pd
 import shutil
 import boto3
 from botocore.exceptions import NoCredentialsError
 import time
-
 import ray
 
-ray.init()
+ray.init()  
 
 # Set up logging
-logging.basicConfig(filename='log/process.log', level=logging.INFO,
+if not os.path.exists('log'):
+    os.makedirs('log')
+    
+ini_forget_time = datetime.now().strftime("%Y.%m.%d_%H.%M.%S_")
+logging.basicConfig(filename='log/' + ini_forget_time + '_process.log', level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
  
 def verify_columns(df, required_columns):
@@ -160,8 +163,6 @@ def process_csv(csv_path):
             if processed_df[col].dtype == 'object':
                 processed_df[col] = clean_column(processed_df[col])
         
-        # processed_df[columns_to_clean] = processed_df[columns_to_clean].apply(clean_column)
-        
         print("Cleaning White Spaces started..........")
         st = time.time()
         logging.info(f"DataFrame shape after cleaning White Spaces: {processed_df.shape}")
@@ -173,24 +174,14 @@ def process_csv(csv_path):
  
         logging.info(f"DataFrame shape after adding Year and Month to new columns: {processed_df.shape}")
         logging.info(f"DataFrame head after adding Year and Month to new columns:\n{processed_df.head()}")
-        ed = time.time()
-        print(f"Time taken to clean white spaces: {ed - st} seconds")
-        print("Cleaning White Spaces completed..........")
         
         try:
-            st_s = time.time()
-            print('Saving the csv file..........')
             formatted_time = datetime.now().strftime("%Y.%m.%d_%H.%M.%S_")
             final_file_path = initial_output_path + formatted_time + '' + csv_path
             processed_df.to_csv(final_file_path, index=False, encoding='utf-8-sig',chunksize=1000000)
-            
-            
             logging.info(f'Processed and cleaned data saved to {final_file_path}')
             logging.info(f"Final DataFrame shape: {processed_df.shape}")
             logging.info(f"Final DataFrame head:\n{processed_df.head()}")
-            ed_s = time.time()
-            print(f"Time taken to save the csv file: {ed_s - st_s} seconds")
-            print('Saving the csv file completed..........')
         except Exception as e:
             logging.error(f"Error writing the file: {e}")
     else:
@@ -203,17 +194,17 @@ def Cleaning_Data():
        
     csv_files = os.listdir("temp")
     
-    # for file in tqdm(csv_files):
-    #     process_csv(file)
+    for file in tqdm(csv_files):
+        process_csv(file)
  
-    # Create a progress bar
-    with tqdm(total=len(csv_files), desc="Processing files") as progress_bar:
-        def process_with_progress(csv_path):
-            process_csv(csv_path)
-            progress_bar.update(1)
+    # # Create a progress bar
+    # with tqdm(total=len(csv_files), desc="Processing files") as progress_bar:
+    #     def process_with_progress(csv_path):
+    #         process_csv(csv_path)
+    #         progress_bar.update(1)
  
-        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
-            executor.map(process_with_progress, csv_files)
+    #     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+    #         executor.map(process_with_progress, csv_files)
  
 # download_data()
 Cleaning_Data()
