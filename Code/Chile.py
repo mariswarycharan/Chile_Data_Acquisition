@@ -4,6 +4,7 @@ import io
 import os
 import logging
 import sys
+from bs4 import BeautifulSoup
 import concurrent.futures
 from datetime import datetime
 from tqdm import tqdm
@@ -126,6 +127,60 @@ def clean_column(column):
                     .str.strip()
     return column
 
+def price_check_verification(id,price_from_csv):
+    
+    payload = { 'api_key': '81716f65a1801a31bc95201daf29aaf4', 'url': f'http://www.mercadopublico.cl/PurchaseOrder/Modules/PO/DetailsPurchaseOrder.aspx?codigoOC={id}', }
+
+    # Get the webpage content
+    response = requests.get('https://api.scraperapi.com/',params=payload)
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Parse the HTML content with BeautifulSoup
+        soup = BeautifulSoup(response.content, 'html.parser')
+
+        # Find the <span> tag with the specific id
+        price_span_list = []
+        
+        for i in range(2,50):
+            
+            id_string = f'gv_ctl0{str(i)}_lblTotal'
+            
+            price_span = soup.find('span', id=id_string)
+            
+            if price_span is None:
+                break
+
+            # Extract and process the text inside the <span> tag
+            if price_span:
+                price_text = price_span.text.strip()
+
+                # Check if the price is in UF
+                if "UF" in price_text:
+                    # Remove the "UF" prefix and any spaces
+                    price_number = price_text.replace('UF', '').strip()
+                else:
+                    # Remove the dollar symbol and any commas (if it were in CLP)
+                    price_number = price_text.replace('$', '').replace('.', '').replace(',', '.').strip()
+
+                # Correct the format for floating-point conversion
+                price_number = price_number.replace('.', '').replace(',', '.')
+
+                # Convert the price to a float
+                price_value = float(price_number)
+                
+                price_span_list.append(round(price_value,0))
+            
+        print(price_span_list)
+        
+        if round(price_from_csv) in price_span_list:
+            return True
+        else:
+            return False
+        
+    else:
+        return 0
+
 def process_csv(csv_path):
     
     print(f'Processing file : {csv_path}')
@@ -184,6 +239,23 @@ def process_csv(csv_path):
             logging.info(f"Final DataFrame head:\n{processed_df.head()}")
         except Exception as e:
             logging.error(f"Error writing the file: {e}")
+            
+        
+        sorted_processed_df = processed_df.sort_values(by=['totalLineaNeto'])
+        
+        for i in range(0,5):
+            val = sorted_processed_df.iloc[i]
+            
+            result_check = price_check_verification(val['Codigo'],val['totalLineaNeto'])
+            
+            if result_check == True:
+                print(f'Price check passed for {val["Codigo"]}')
+                logging.info(f'Price check passed for {val["Codigo"]}')
+                break
+            else:
+                print(f'Price check failed for {val["Codigo"]}')
+                logging.info(f'Price check failed for {val["Codigo"]}')
+        
     else:
         logging.warning(f"No data to save for {csv_path}.")
  
@@ -205,6 +277,8 @@ def Cleaning_Data():
  
     #     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
     #         executor.map(process_with_progress, csv_files)
+ 
+ 
  
 # download_data()
 Cleaning_Data()
