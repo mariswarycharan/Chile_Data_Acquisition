@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "chili-data-acquisition"
+version = "0.1.0"
+description = ""
+authors = ["Charan A A <mariswarycharan@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pandas = "*"  # or the latest version
+boto3 = "*"  # or the latest version
+tqdm = "*"   # or the latest version
+ray = "*"     # or the latest version
+beautifulsoup4 = "*"  # or the latest version
+modin = "*"  # or the latest version
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
