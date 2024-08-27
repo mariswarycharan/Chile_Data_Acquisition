@@ -280,5 +280,5 @@ def Cleaning_Data():
  
  
  
-# download_data()
+download_data()
 Cleaning_Data()

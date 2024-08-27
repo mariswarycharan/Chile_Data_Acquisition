@@ -14,6 +14,9 @@ ray = "*"     # or the latest version
 beautifulsoup4 = "*"  # or the latest version
 modin = "*"  # or the latest version
 
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.29.5"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
