@@ -6,7 +6,7 @@ authors = ["Charan A A <mariswarycharan@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.11"
 pandas = "*"  # or the latest version
 boto3 = "*"  # or the latest version
 tqdm = "*"   # or the latest version
