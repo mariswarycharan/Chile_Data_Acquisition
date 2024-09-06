@@ -24,7 +24,7 @@ if not os.path.exists('log'):
 ini_forget_time = datetime.now().strftime("%Y.%m.%d_%H.%M.%S_")
 logging.basicConfig(filename='log/' + ini_forget_time + '_process.log', level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
- 
+
 def verify_columns(df, required_columns):
     """ Verify if the required columns are present in the DataFrame """
  
