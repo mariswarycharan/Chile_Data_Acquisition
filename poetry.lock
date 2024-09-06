@@ -629,6 +629,8 @@ files = [
 ]
 
 [[package]]
+<<<<<<< HEAD
+=======
 name = "dill"
 version = "0.3.8"
 description = "serialize all of Python"
@@ -655,6 +657,7 @@ files = [
 ]
 
 [[package]]
+>>>>>>> 33e4d09c8fabea4799b9f518607360a0edb00a5d
 name = "et-xmlfile"
 version = "1.1.0"
 description = "An implementation of lxml.xmlfile for the standard library"
@@ -1818,6 +1821,8 @@ files = [
 ]
 
 [[package]]
+<<<<<<< HEAD
+=======
 name = "opencensus"
 version = "0.11.4"
 description = "A stats collection and distributed tracing framework"
@@ -1845,6 +1850,7 @@ files = [
 ]
 
 [[package]]
+>>>>>>> 33e4d09c8fabea4799b9f518607360a0edb00a5d
 name = "openpyxl"
 version = "3.1.5"
 description = "A Python library to read/write Excel 2010 xlsx/xlsm files"
@@ -2166,6 +2172,8 @@ files = [
 tests = ["pytest"]
 
 [[package]]
+<<<<<<< HEAD
+=======
 name = "py-spy"
 version = "0.3.14"
 description = "Sampling profiler for Python programs"
@@ -2182,6 +2190,7 @@ files = [
 ]
 
 [[package]]
+>>>>>>> 33e4d09c8fabea4799b9f518607360a0edb00a5d
 name = "pyarrow"
 version = "17.0.0"
 description = "Python library for Apache Arrow"
@@ -2233,6 +2242,8 @@ numpy = ">=1.16.6"
 test = ["cffi", "hypothesis", "pandas", "pytest", "pytz"]
 
 [[package]]
+<<<<<<< HEAD
+=======
 name = "pyasn1"
 version = "0.6.0"
 description = "Pure-Python implementation of ASN.1 types and DER/BER/CER codecs (X.208)"
@@ -2258,6 +2269,7 @@ files = [
 pyasn1 = ">=0.4.6,<0.7.0"
 
 [[package]]
+>>>>>>> 33e4d09c8fabea4799b9f518607360a0edb00a5d
 name = "pycparser"
 version = "2.22"
 description = "C parser in Python"
@@ -3498,4 +3510,8 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
+<<<<<<< HEAD
+content-hash = "ba1eca84c7a0a5121bbbed23289debbd5d1e3ab2e54314b7519ab80e317bf799"
+=======
 content-hash = "715dfcd97feb22b9308fc464a06ba0bc3e6b4d56ae1a61bf1cc3a7bcabd8035b"
+>>>>>>> 33e4d09c8fabea4799b9f518607360a0edb00a5d
