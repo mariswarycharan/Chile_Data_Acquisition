@@ -18,7 +18,7 @@ openpyxl = "*"  # or the latest version
 swifter = "^1.4.0"
 fuzzywuzzy = {extras = ["speedup"], version = "^0.18.0"}
 mapply = "^0.1.26"
-vaex = "^4.17.0"
+
 
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.29.5"
