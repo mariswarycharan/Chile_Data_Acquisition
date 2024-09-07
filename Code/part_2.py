@@ -8,18 +8,19 @@ import swifter
 import warnings 
 warnings.filterwarnings("ignore")
 
-from tqdm import tqdm 
-tqdm.pandas() 
 
 # import ray
 # ray.init()
+
+import time
+start_time = time.time()
 
 # Load Excel files
 market_basket_df = pd.read_excel(r'Control\Market_Basket.xlsx')
 market_basket_df['Pactivo_Copy'] = market_basket_df['Pactivo']
 market_basket_df['Brand_Generic_Biosimilar_Names_Copy'] = market_basket_df['Brand/Generic/Biosimilar Names']
 
-bulk_downloads_file = pd.read_csv(r"Output\2024.08.16_15.40.02_2024-1.csv")
+bulk_downloads_file = pd.read_csv(r"Output\2024.08.16_15.40.02_2024-1.csv").loc[0:1000]
 
 # Filtering and extraction
 filtered_data_pactivo = market_basket_df[(market_basket_df['Match with pactivo'] == 'Y') & (market_basket_df['Keep (Y/N)'] == 'Y')]
@@ -78,7 +79,7 @@ def find_matches(row, choices, score_cutoff=81):
     # Initialize matches to default values
     match_comprador = ('', 0)
     match_proveedor = ('', 0)
-    trivial_strings = ["", ".", ",", ":", ";", "-", "_", "/", "\\", "|", "?", "!", "*", "&", "%", "$", "#", "@", "^", "(", ")", "[", "]", "{", "}", "<", ">", "''", '""', "``", "~", "`", "+", "=", " "]
+    trivial_strings = ["", "??", ".", ",", ":", ";", "-", "_", "/", "\\", "|", "?", "!", "*", "&", "%", "$", "#", "@", "^", "(", ")", "[", "]", "{", "}", "<", ">", "''", '""', "``", "~", "`", "+", "=", " "]
 
     # Check if strings are valid (non-empty and not just trivial characters)
     if especificacion_comprador and especificacion_comprador.strip() not in trivial_strings:  # Only process if not empty or trivial
@@ -117,6 +118,7 @@ bulk_downloads_file.insert(loc=bulk_downloads_file.columns.get_loc("Best Match P
 
 # Final selection functions
 def select_highest_score(row):
+    
     scores = {
         row['Best Match Comprador Pactivo']: row['Match Score Comprador Pactivo'],
         row['Best Match Proveedor Pactivo']: row['Match Score Proveedor Pactivo'],
@@ -152,7 +154,7 @@ def select_final_brand(row):
         else:
             return pd.Series(['', 0], index=['Brand_Final', 'Brand_Highest_Score'])
 
-# progress_swifter.apply the function to create the 'Brand Final' and 'Brand Final Score' columns
+# progress_swifter.swifter.apply the function to create the 'Brand Final' and 'Brand Final Score' columns
 # bulk_downloads_file[['Brand_Final', 'Brand_Highest_Score']] = bulk_downloads_file.swifter.apply(select_final_brand, axis=1)
 add_two_column = bulk_downloads_file.swifter.apply(select_final_brand, axis=1)
 if add_two_column.empty == False:
@@ -191,11 +193,13 @@ def remove_duplicates(text):
 
     return ' '.join(unique_items)
 
-# progress_swifter.apply dosage extraction and removal of duplicates after matching
-bulk_downloads_file['Dosage_comprador'] = bulk_downloads_file['EspecificacionComprador'].swifter.apply(lambda x: remove_duplicates(extract_dosage(x)))
-bulk_downloads_file['Dosage_pharma_comprador'] = bulk_downloads_file['EspecificacionComprador'].swifter.apply(lambda x: remove_duplicates(extract_dosage(x)))
-bulk_downloads_file['Dosage_proveedor'] = bulk_downloads_file['EspecificacionProveedor'].swifter.apply(lambda x: remove_duplicates(extract_dosage(x)))
-bulk_downloads_file['Dosage_pharma_proveedor'] = bulk_downloads_file['EspecificacionProveedor'].swifter.apply(lambda x: remove_duplicates(extract_dosage(x)))
+# progress_swifter.swifter.apply dosage extraction and removal of duplicates after matching
+value1 = bulk_downloads_file['EspecificacionComprador'].swifter.apply(lambda x: remove_duplicates(extract_dosage(x)))
+value2 = bulk_downloads_file['EspecificacionProveedor'].swifter.apply(lambda x: remove_duplicates(extract_dosage(x)))
+bulk_downloads_file['Dosage_comprador'] = value1
+bulk_downloads_file['Dosage_pharma_comprador'] = value1
+bulk_downloads_file['Dosage_proveedor'] = value2
+bulk_downloads_file['Dosage_pharma_proveedor'] = value2
 
 
 bulk_downloads_file['Dosage_Final'] = bulk_downloads_file['Dosage_comprador'].where(bulk_downloads_file['Dosage_comprador'] != 'Not Found', bulk_downloads_file['Dosage_proveedor'])
@@ -203,3 +207,6 @@ bulk_downloads_file['Dosage_pharma'] = bulk_downloads_file['Dosage_pharma_compra
 
 # Save the final result
 bulk_downloads_file.to_csv('April_Bulk_Presentacion.csv', index=False, encoding = 'utf-8-sig')
+
+end_time = time.time()  
+print(f"Time taken: {end_time - start_time} seconds")
