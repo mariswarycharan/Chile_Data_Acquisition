@@ -5,8 +5,8 @@ from fuzzywuzzy import process
 import warnings 
 warnings.filterwarnings("ignore")
 
-# import ray
-# ray.init()
+import ray
+ray.init()
 
 from tqdm import tqdm 
 tqdm.pandas() 
@@ -19,7 +19,7 @@ market_basket_df = pd.read_excel(r'Control\Market_Basket.xlsx')
 market_basket_df['Pactivo_Copy'] = market_basket_df['Pactivo']
 market_basket_df['Brand_Generic_Biosimilar_Names_Copy'] = market_basket_df['Brand/Generic/Biosimilar Names']
 
-bulk_downloads_file = pd.read_csv(r"D:\Downloads\April_Bulk.csv")
+bulk_downloads_file = pd.read_csv(r"Output\2024.08.27_13.41.19_2024-1.csv").loc[0:10000]
 
 # Filtering and extraction (Vectorized)
 filtered_data_pactivo = market_basket_df[(market_basket_df['Match with pactivo'] == 'Y') & (market_basket_df['Keep (Y/N)'] == 'Y')]
