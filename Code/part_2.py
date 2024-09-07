@@ -19,7 +19,7 @@ market_basket_df = pd.read_excel(r'Control\Market_Basket.xlsx')
 market_basket_df['Pactivo_Copy'] = market_basket_df['Pactivo']
 market_basket_df['Brand_Generic_Biosimilar_Names_Copy'] = market_basket_df['Brand/Generic/Biosimilar Names']
 
-bulk_downloads_file = pd.read_csv(r"D:\Downloads\April_Bulk.csv")
+bulk_downloads_file = pd.read_csv(r"Output\2024.08.16_15.40.02_2024-1.csv")
 
 # Filtering and extraction
 filtered_data_pactivo = market_basket_df[(market_basket_df['Match with pactivo'] == 'Y') & (market_basket_df['Keep (Y/N)'] == 'Y')]
@@ -202,4 +202,4 @@ bulk_downloads_file['Dosage_Final'] = bulk_downloads_file['Dosage_comprador'].wh
 bulk_downloads_file['Dosage_pharma'] = bulk_downloads_file['Dosage_pharma_comprador'].where(bulk_downloads_file['Dosage_pharma_comprador'] != 'Not Found', bulk_downloads_file['Dosage_pharma_proveedor'])
 
 # Save the final result
-bulk_downloads_file.to_csv('April_Bulk_Presentacion_1.csv', index=False, encoding = 'utf-8-sig')
+bulk_downloads_file.to_csv('April_Bulk_Presentacion.csv', index=False, encoding = 'utf-8-sig')
