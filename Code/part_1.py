@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 import concurrent.futures
 from datetime import datetime
 from tqdm import tqdm
-import modin.pandas as pd
+import pandas as pd
 import shutil
 import boto3
 from botocore.exceptions import NoCredentialsError

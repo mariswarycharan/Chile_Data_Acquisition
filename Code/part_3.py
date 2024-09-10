@@ -2,9 +2,11 @@ from fuzzywuzzy import process, fuzz
 import pandas as pd
 
 # Load the datasets
+from tqdm import tqdm 
+tqdm.pandas() 
 
 def sucursal_matching(dataframe):
-
+   
     final_bulk = dataframe
     proveedor_mapping = pd.read_excel('Control/Proveedor Mapping.xlsx')
 
@@ -20,7 +22,8 @@ def sucursal_matching(dataframe):
     choices = proveedor_mapping['Sucursal / NombreProveedor'].tolist()
 
     # Apply fuzzy matching to the 'Sucursal' column with a fallback to the original name if below threshold
-    final_bulk['Sucursal Proveedor'], final_bulk['Match Score'] = zip(*final_bulk['Sucursal'].apply(
+    print("Sucursal matching started ...")
+    final_bulk['Sucursal Proveedor'], final_bulk['Match Score'] = zip(*final_bulk['Sucursal'].progress_apply(
         lambda x: get_best_match_with_fallback(x, choices, scorer=fuzz.token_set_ratio, threshold=90) if pd.notna(x) else (None, None)
     ))
 

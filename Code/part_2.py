@@ -21,7 +21,7 @@ start_time = time.time()
 def fuzzy_match_filtering(dataframe):
 
     # Load Excel files
-    market_basket_df = pd.read_csv("Control/New_Market_Basket.xlsx")
+    market_basket_df = pd.read_excel("Control/New_Market_Basket.xlsx")
     market_basket_df['Pactivo_Copy'] = market_basket_df['Pactivo']
     market_basket_df['Brand_Generic_Biosimilar_Names_Copy'] = market_basket_df['Brand/Generic/Biosimilar Names']
 
@@ -84,7 +84,7 @@ def fuzzy_match_filtering(dataframe):
         # Initialize matches to default values
         match_comprador = ('', 0)
         match_proveedor = ('', 0)
-        trivial_strings = ["", "??", ".", ",", ":", ";", "-", "_", "/", "\\", "|", "?", "!", "*", "&", "%", "$", "#", "@", "^", "(", ")", "[", "]", "{", "}", "<", ">", "''", '""', "``", "~", "`", "+", "=", " ","??'"]
+        trivial_strings = ["", "??", ".", ",", ":", ";", "-", "_", "/", "\\", "|", "?", "!", "*", "&", "%", "$", "#", "@", "^", "(", ")", "[", "]", "{", "}", "<", ">", "''", '""', "``", "~", "`", "+", "=", " ","??''"]
 
         # Check if strings are valid (non-empty and not just trivial characters)
         if especificacion_comprador and especificacion_comprador.strip() not in trivial_strings:  # Only process if not empty or trivial
@@ -224,3 +224,7 @@ def fuzzy_match_filtering(dataframe):
     print(f"Time taken: {end_time - start_time} seconds")
     
     return bulk_downloads_file
+
+
+# df = pd.read_csv(r"log\April_Bulk.csv")
+# fuzzy_match_filtering(df)
