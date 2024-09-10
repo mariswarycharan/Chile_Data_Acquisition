@@ -33,7 +33,7 @@ def sucursal_matching(dataframe):
     # Fill blanks in 'Corporation Match' with values from 'NombreProveedor'
     final_jan_bulk['Corporation Match'] = final_jan_bulk['Corporation Match'].fillna(final_jan_bulk['NombreProveedor'])
 
-    # Save the results back to an Excel file
-    # final_jan_bulk.to_excel('Updated_Final_Jan_Bulk.xlsx', index=False)
+    final_filtered_data = final_jan_bulk.loc[final_jan_bulk['codigoProductoONU'] != 46171610]
     
-    return final_jan_bulk
+    return final_filtered_data
+
