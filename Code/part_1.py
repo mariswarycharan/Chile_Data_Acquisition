@@ -14,6 +14,8 @@ import boto3
 from botocore.exceptions import NoCredentialsError
 import time
 import ray
+from part_2 import fuzzy_match_filtering
+from part_3 import sucursal_matching
 
 ray.init()  
 
@@ -231,12 +233,18 @@ def process_csv(csv_path):
         logging.info(f"DataFrame head after adding Year and Month to new columns:\n{processed_df.head()}")
         
         try:
+            
+            dataframe_fuzzy_match = fuzzy_match_filtering(processed_df)
+            final_dataframe = sucursal_matching(dataframe_fuzzy_match)
+            
             formatted_time = datetime.now().strftime("%Y.%m.%d_%H.%M.%S_")
             final_file_path = initial_output_path + formatted_time + '' + csv_path
-            processed_df.to_csv(final_file_path, index=False, encoding='utf-8-sig',chunksize=1000000)
+        
+            final_dataframe.to_csv(final_file_path, index=False, encoding='utf-8-sig',chunksize=1000000)
+            
             logging.info(f'Processed and cleaned data saved to {final_file_path}')
-            logging.info(f"Final DataFrame shape: {processed_df.shape}")
-            logging.info(f"Final DataFrame head:\n{processed_df.head()}")
+            logging.info(f"Final DataFrame shape: {final_dataframe.shape}")
+            logging.info(f"Final DataFrame head:\n{final_dataframe.head()}")
         except Exception as e:
             logging.error(f"Error writing the file: {e}")
             
@@ -279,6 +287,5 @@ def Cleaning_Data():
     #         executor.map(process_with_progress, csv_files)
  
  
- 
-download_data()
-Cleaning_Data()
+# download_data()
+# Cleaning_Data()
