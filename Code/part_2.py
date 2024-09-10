@@ -46,7 +46,7 @@ def extract_molecules(product_string):
         ["Factor Recombinante"], ["Factor 7"], ["Factor Antihemofilico 7"], ["FACTOR VIII"],
         ["Complejo Anti-Inhibidor Fac VIII"], ["Factor Antihemofilico PM VIII"], ["Factor von Willebrand"],
         ["Factor Antihem PM VIII"], ["Fact Antihemofilico VIII"], ["MCT Fact Antihem VIII"],
-        ["MCT Fact.Antihem.VIII"], ["Haemate P"], ["WILATE"],["columvi"],["lucentis"]
+        ["MCT Fact.Antihem.VIII"], ["Haemate P"], ["WILATE"],["columvi"],["lucentis"], ["hemlibra"],["tascenso"], ["fingolimod hcl"]
     ]
 
     molecules_in_string = [molecule_list for molecule_list in known_molecules
@@ -82,7 +82,7 @@ def find_matches(row, choices, score_cutoff=81):
     # Initialize matches to default values
     match_comprador = ('', 0)
     match_proveedor = ('', 0)
-    trivial_strings = ["", "??", ".", ",", ":", ";", "-", "_", "/", "\\", "|", "?", "!", "*", "&", "%", "$", "#", "@", "^", "(", ")", "[", "]", "{", "}", "<", ">", "''", '""', "``", "~", "`", "+", "=", " "]
+    trivial_strings = ["", "??", ".", ",", ":", ";", "-", "_", "/", "\\", "|", "?", "!", "*", "&", "%", "$", "#", "@", "^", "(", ")", "[", "]", "{", "}", "<", ">", "''", '""', "``", "~", "`", "+", "=", " ","??'"]
 
     # Check if strings are valid (non-empty and not just trivial characters)
     if especificacion_comprador and especificacion_comprador.strip() not in trivial_strings:  # Only process if not empty or trivial
