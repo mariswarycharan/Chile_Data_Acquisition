@@ -5,7 +5,7 @@ import pandas as pd
 
 def sucursal_matching(dataframe):
 
-    final_jan_bulk = dataframe
+    final_bulk = dataframe
     proveedor_mapping = pd.read_excel('Control/Proveedor Mapping.xlsx')
 
     # Function to perform fuzzy matching with Token Set Ratio and return original name if the score is below the threshold
@@ -20,7 +20,7 @@ def sucursal_matching(dataframe):
     choices = proveedor_mapping['Sucursal / NombreProveedor'].tolist()
 
     # Apply fuzzy matching to the 'Sucursal' column with a fallback to the original name if below threshold
-    final_jan_bulk['Sucursal Proveedor'], final_jan_bulk['Match Score'] = zip(*final_jan_bulk['Sucursal'].apply(
+    final_bulk['Sucursal Proveedor'], final_bulk['Match Score'] = zip(*final_bulk['Sucursal'].apply(
         lambda x: get_best_match_with_fallback(x, choices, scorer=fuzz.token_set_ratio, threshold=90) if pd.notna(x) else (None, None)
     ))
 
@@ -28,12 +28,12 @@ def sucursal_matching(dataframe):
     corp_mapping = proveedor_mapping.set_index('Sucursal / NombreProveedor')['CorporacionesPHT'].to_dict()
 
     # Map the "Corporation Match" column using "Sucursal Proveedor" as the key to look up the "CorporacionesPHT"
-    final_jan_bulk['Corporation Match'] = final_jan_bulk['Sucursal Proveedor'].map(corp_mapping)
+    final_bulk['Corporation Match'] = final_bulk['Sucursal Proveedor'].map(corp_mapping)
 
     # Fill blanks in 'Corporation Match' with values from 'NombreProveedor'
-    final_jan_bulk['Corporation Match'] = final_jan_bulk['Corporation Match'].fillna(final_jan_bulk['NombreProveedor'])
+    final_bulk['Corporation Match'] = final_bulk['Corporation Match'].fillna(final_bulk['NombreProveedor'])
 
-    final_filtered_data = final_jan_bulk.loc[final_jan_bulk['codigoProductoONU'] != 46171610]
+    final_filtered_data = final_bulk.loc[final_bulk['codigoProductoONU'] != 46171610]
     
     return final_filtered_data
 
