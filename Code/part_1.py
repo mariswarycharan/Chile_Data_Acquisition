@@ -233,9 +233,10 @@ def process_csv(csv_path):
         logging.info(f"DataFrame head after adding Year and Month to new columns:\n{processed_df.head()}")
         
         try:
-            
-            dataframe_fuzzy_match = fuzzy_match_filtering(processed_df)
-            final_dataframe = sucursal_matching(dataframe_fuzzy_match)
+            logging.info(f"fuzzy_match_filtering started ...")
+            dataframe_fuzzy_match = fuzzy_match_filtering(processed_df,ini_forget_time)
+            logging.info(f"Sucursal matching completed ...")
+            final_dataframe = sucursal_matching(dataframe_fuzzy_match,ini_forget_time)
             
             formatted_time = datetime.now().strftime("%Y.%m.%d_%H.%M.%S_")
             final_file_path = initial_output_path + formatted_time + '' + csv_path

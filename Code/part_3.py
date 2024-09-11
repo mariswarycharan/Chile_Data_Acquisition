@@ -1,11 +1,15 @@
 from fuzzywuzzy import process, fuzz
 import pandas as pd
+import logging
 
 # Load the datasets
 from tqdm import tqdm 
 tqdm.pandas() 
 
-def sucursal_matching(dataframe):
+def sucursal_matching(dataframe,ini_forget_time):
+    
+    logging.basicConfig(filename='log/' + ini_forget_time + '_process.log', level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
    
     final_bulk = dataframe
     proveedor_mapping = pd.read_excel('Control/Proveedor Mapping.xlsx')

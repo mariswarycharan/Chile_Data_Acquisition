@@ -3,6 +3,7 @@ import pandas as pd
 import re
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
+import logging
 
 
 import warnings 
@@ -18,8 +19,11 @@ import time
 
 start_time = time.time()
 
-def fuzzy_match_filtering(dataframe):
+def fuzzy_match_filtering(dataframe,ini_forget_time):
 
+    logging.basicConfig(filename='log/' + ini_forget_time + '_process.log', level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
+    
     # Load Excel files
     market_basket_df = pd.read_excel("Control/New_Market_Basket.xlsx")
     market_basket_df['Pactivo_Copy'] = market_basket_df['Pactivo']
@@ -101,10 +105,12 @@ def fuzzy_match_filtering(dataframe):
                         index=['Best Match Comprador', 'Match Score Comprador', 'Best Match Proveedor', 'Match Score Proveedor'])
 
     print("Operation running for find_matches for pactivo ...")
+    logging.info("Operation running for find_matches for pactivo ...")
     bulk_downloads_file[['Best Match Comprador Pactivo', 'Match Score Comprador Pactivo', 'Best Match Proveedor Pactivo', 'Match Score Proveedor Pactivo']] = \
         bulk_downloads_file.progress_apply(lambda row: find_matches(row, pactivo), axis=1)
 
     print("Operation running for find_matches for Brand ...")
+    logging.info("Operation running for find_matches for Brand ...")
     bulk_downloads_file[['Best Match Comprador Brand', 'Match Score Comprador Brand', 'Best Match Proveedor Brand', 'Match Score Proveedor Brand']] = \
         bulk_downloads_file.progress_apply(lambda row: find_matches(row, brand), axis=1)
 
@@ -118,8 +124,10 @@ def fuzzy_match_filtering(dataframe):
         return ''
 
     print("Operation running for map_pactivo_from_brand for Best Match Comprador Brand ...")
+    logging.info("Operation running for map_pactivo_from_brand for Best Match Comprador Brand ...")
     bulk_downloads_file['Mapped Pactivo from Comprador Brand'] = bulk_downloads_file['Best Match Comprador Brand'].progress_apply(map_pactivo_from_brand)
     print("Operation running for map_pactivo_from_brand for Best Match Proveedor Brand ...")
+    logging.info("Operation running for map_pactivo_from_brand for Best Match Proveedor Brand ...")
     bulk_downloads_file['Mapped Pactivo from Proveedor Brand'] = bulk_downloads_file['Best Match Proveedor Brand'].progress_apply(map_pactivo_from_brand)
 
     bulk_downloads_file.insert(loc=bulk_downloads_file.columns.get_loc("Best Match Comprador Brand") + 1, column='Mapped Pactivo from Comprador Brand', value=bulk_downloads_file.pop('Mapped Pactivo from Comprador Brand'))
@@ -141,6 +149,7 @@ def fuzzy_match_filtering(dataframe):
         return pd.Series([None, 0], index=['Pactivo_Final', 'Pactivo_Highest_Score'])
 
     print("Operation running for select_highest_score ...")
+    logging.info("Operation running for select_highest_score ...")
     bulk_downloads_file[['Pactivo_Final', 'Pactivo_Highest_Score']] = bulk_downloads_file.progress_apply(select_highest_score, axis=1)
 
     bulk_downloads_file = bulk_downloads_file[bulk_downloads_file['Pactivo_Highest_Score'] > 0]
@@ -166,6 +175,7 @@ def fuzzy_match_filtering(dataframe):
 
     # progress_swifter.progress_apply the function to create the 'Brand Final' and 'Brand Final Score' columns
     # bulk_downloads_file[['Brand_Final', 'Brand_Highest_Score']] = bulk_downloads_file.progress_apply(select_final_brand, axis=1)
+    logging.info("Operation running for select_final_brand ...")
     add_two_column = bulk_downloads_file.progress_apply(select_final_brand, axis=1)
     if add_two_column.empty == False:
         bulk_downloads_file[['Brand_Final', 'Brand_Highest_Score']] = add_two_column
@@ -205,8 +215,10 @@ def fuzzy_match_filtering(dataframe):
 
     # progress_swifter.progress_apply dosage extraction and removal of duplicates after matching
     print("Operation running for remove_duplicates for EspecificacionComprador ...")
+    logging.info("Operation running for remove_duplicates for EspecificacionComprador ...")
     value1 = bulk_downloads_file['EspecificacionComprador'].progress_apply(lambda x: remove_duplicates(extract_dosage(x)))
     print("Operation running for remove_duplicates for EspecificacionProveedor ...")
+    logging.info("Operation running for remove_duplicates for EspecificacionProveedor ...")
     value2 = bulk_downloads_file['EspecificacionProveedor'].progress_apply(lambda x: remove_duplicates(extract_dosage(x)))
     bulk_downloads_file['Dosage_comprador'] = value1
     bulk_downloads_file['Dosage_pharma_comprador'] = value1
