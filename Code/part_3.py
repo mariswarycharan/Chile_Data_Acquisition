@@ -38,5 +38,10 @@ def sucursal_matching(dataframe):
 
     final_filtered_data = final_bulk.loc[final_bulk['codigoProductoONU'] != 46171610]
     
+    final_filtered_data = final_filtered_data[~(
+        final_filtered_data['EspecificacionComprador'].str.contains(r'\(octaplex\)|\boctaplex\b', case=False, na=False) | 
+        final_filtered_data['EspecificacionProveedor'].str.contains(r'\(octaplex\)|\boctaplex\b', case=False, na=False)
+        )]
+    
     return final_filtered_data
 
