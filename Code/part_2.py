@@ -174,19 +174,19 @@ def fuzzy_match_filtering(dataframe,ini_forget_time):
                 return pd.Series(['', 0], index=['Brand_Final', 'Brand_Highest_Score'])
 
     # progress_swifter.progress_apply the function to create the 'Brand Final' and 'Brand Final Score' columns
-    # bulk_downloads_file[['Brand_Final', 'Brand_Highest_Score']] = bulk_downloads_file.progress_apply(select_final_brand, axis=1)
+    # bulk_downloads_file[['Brand', 'Brand_Highest_Score']] = bulk_downloads_file.progress_apply(select_final_brand, axis=1)
     logging.info("Operation running for select_final_brand ...")
     add_two_column = bulk_downloads_file.progress_apply(select_final_brand, axis=1)
     if add_two_column.empty == False:
-        bulk_downloads_file[['Brand_Final', 'Brand_Highest_Score']] = add_two_column
+        bulk_downloads_file[['Brand', 'Brand_Highest_Score']] = add_two_column
     else:
-        bulk_downloads_file[['Brand_Final', 'Brand_Highest_Score']] = pd.Series(['', 0], index=['Brand_Final', 'Brand_Highest_Score'])
+        bulk_downloads_file[['Brand', 'Brand_Highest_Score']] = pd.Series(['', 0], index=['Brand', 'Brand_Highest_Score'])
 
 
     # Mapping 'Pactivo_Final' to 'Rename Pactivo'
     pactivo_rename_mapping = dict(zip(market_basket_df['Pactivo'].str.lower(), market_basket_df['Rename Pactivo'].str.lower()))
 
-    bulk_downloads_file['Pactivo_Renamed'] = bulk_downloads_file['Pactivo_Final'].map(pactivo_rename_mapping).fillna(bulk_downloads_file['Pactivo_Final'])
+    bulk_downloads_file['Pactivo'] = bulk_downloads_file['Pactivo_Final'].str.lower().map(pactivo_rename_mapping).fillna(bulk_downloads_file['Pactivo_Final'])
 
     # Dosage extraction functions
     def extract_dosage(text):
@@ -201,7 +201,7 @@ def fuzzy_match_filtering(dataframe,ini_forget_time):
             if matches:
                 return ', '.join([match[0].strip() for match in matches if match[0]])
 
-        return 'Not Found'
+        return ''
 
     def remove_duplicates(text):
         normalized = [re.sub(r'\s+', '', item.lower()) for item in re.split(r'(\d+\s*[a-zA-Z]+)', text) if item.strip()]
@@ -212,6 +212,32 @@ def fuzzy_match_filtering(dataframe,ini_forget_time):
                 unique_items.append(item)
 
         return ' '.join(unique_items)
+    
+    def extract_first_mg_ui(input_str):
+        # Find the index of 'mg' and 'ui'
+    
+        input_str = input_str.lower().strip()
+        
+        mg_index = input_str.find('mg')
+        ui_index = input_str.find('ui')
+
+        # If both "mg" and "ui" are found, return the first one
+        if mg_index != -1 and ui_index != -1:
+            if mg_index < ui_index:
+                return input_str.split('mg')[0].strip().replace(' ','') + 'mg'
+            else:
+                return input_str.split('ui')[0].strip().replace(' ','') + 'ui'
+        
+        # If only "mg" is found
+        elif mg_index != -1:
+            return input_str.split('mg')[0].strip().replace(' ','') + 'mg'
+        
+        # If only "ui" is found
+        elif ui_index != -1:
+            return input_str.split('ui')[0].strip().replace(' ','') + 'ui'
+        
+        # If neither is found, return None or some default message
+        return ""
 
     # progress_swifter.progress_apply dosage extraction and removal of duplicates after matching
     print("Operation running for remove_duplicates for EspecificacionComprador ...")
@@ -221,14 +247,15 @@ def fuzzy_match_filtering(dataframe,ini_forget_time):
     logging.info("Operation running for remove_duplicates for EspecificacionProveedor ...")
     value2 = bulk_downloads_file['EspecificacionProveedor'].progress_apply(lambda x: remove_duplicates(extract_dosage(x)))
     bulk_downloads_file['Dosage_comprador'] = value1
-    bulk_downloads_file['Dosage_pharma_comprador'] = value1
+    bulk_downloads_file['Dosage_pharmatender_comprador'] = bulk_downloads_file['Dosage_comprador'].map(extract_first_mg_ui)
     bulk_downloads_file['Dosage_proveedor'] = value2
-    bulk_downloads_file['Dosage_pharma_proveedor'] = value2
+    bulk_downloads_file['Dosage_pharmatender_proveedor'] = bulk_downloads_file['Dosage_proveedor'].map(extract_first_mg_ui)
 
 
-    bulk_downloads_file['Dosage_Final'] = bulk_downloads_file['Dosage_comprador'].where(bulk_downloads_file['Dosage_comprador'] != 'Not Found', bulk_downloads_file['Dosage_proveedor'])
-    bulk_downloads_file['Dosage_pharma'] = bulk_downloads_file['Dosage_pharma_comprador'].where(bulk_downloads_file['Dosage_pharma_comprador'] != 'Not Found', bulk_downloads_file['Dosage_pharma_proveedor'])
-
+    bulk_downloads_file['Dosage_Final'] = bulk_downloads_file['Dosage_comprador'].where(bulk_downloads_file['Dosage_comprador'] != '', bulk_downloads_file['Dosage_proveedor'])
+    bulk_downloads_file['Presentación'] = bulk_downloads_file['Dosage_Final'].map(extract_first_mg_ui)
+    
+    
     # Save the final result
     # bulk_downloads_file.to_csv('April_Bulk_Presentacion.csv', index=False, encoding = 'utf-8-sig')
 
