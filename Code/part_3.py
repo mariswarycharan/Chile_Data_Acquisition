@@ -78,8 +78,8 @@ def sucursal_matching(dataframe,ini_forget_time):
     Rename_Pactivo_dict = {j.lower():i for i,j in market_basket_df.drop_duplicates("Rename Pactivo")[['Market or TA','Rename Pactivo']].to_numpy()}
     final_filtered_data['Market_or_TA'] = final_filtered_data['Pactivo'].str.lower().map(Rename_Pactivo_dict)
     
+# Read the OrganismoPublico_Mapping and the main data file
     Organismo_Publico_mapping_file_path = 'Control/OrganismoPublico_Mapping.xlsx'
-    # Read the OrganismoPublico_Mapping and the main data file
     organismo_mapping_df = pd.read_excel(Organismo_Publico_mapping_file_path)
 
     # Perform the mapping by merging both dataframes on the 'OrganismoPublico' column
@@ -91,19 +91,21 @@ def sucursal_matching(dataframe,ini_forget_time):
     # Drop the 'Mapped_Razon_Social_Cliente' column as it's no longer needed
     final_df = merged_df.drop(columns=['Mapped_Razon_Social_Cliente'])
 
-    # Dictionary mapping specific values from "UnidadCompra" to replace in "OrganismoPublico"
-    replacement_dict = {
-        'COMANDO DE APOYO A LA FUERZA': 'Replacement Value 1',
-        'DIRECCION DE ABASTECIMIENTO DE LA ARMADA': 'Replacement Value 2',
-        'SERVICIO DE SALUD CHILOE': 'Replacement Value 3',
-        'FUERZA AEREA DE CHILE COMANDO LOGISTICO': 'Replacement Value 4'
-    }
+    # Function to check and replace specific words in 'OrganismoPublico' with corresponding 'UnidadCompra' value
+    def check_and_replace(row):
+        # Replace based on the values found in OrganismoPublico, using UnidadCompra as the replacement value
+        if 'COMANDO DE APOYO A LA FUERZA' in row['OrganismoPublico']:
+            return row['UnidadCompra']
+        elif 'DIRECCION DE ABASTECIMIENTO DE LA ARMADA' in row['OrganismoPublico']:
+            return row['UnidadCompra']
+        elif 'SERVICIO DE SALUD CHILOE' in row['OrganismoPublico']:
+            return row['UnidadCompra']
+        elif 'FUERZA AEREA DE CHILE COMANDO LOGISTICO' in row['OrganismoPublico']:
+            return row['UnidadCompra']
+        return row['OrganismoPublico']  # Return the original value if no match is found
 
-    # Replacing values in "OrganismoPublico" based only on the specific "UnidadCompra" values in the dictionary
-    final_df['OrganismoPublico'] = final_df.apply(
-        lambda row: replacement_dict.get(row['UnidadCompra'], row['OrganismoPublico']),
-        axis=1
-    )
+    # Apply the function to replace values in 'OrganismoPublico' based on 'UnidadCompra'
+    final_df['OrganismoPublico'] = final_df.apply(check_and_replace, axis=1)
 
 
     sector_df = pd.read_excel('Control/Sector.xlsx')
@@ -129,7 +131,7 @@ def sucursal_matching(dataframe,ini_forget_time):
     final_df['totalLineaNeto'] = final_df['totalLineaNeto'].apply(lambda x: "{:,}".format(x))
     
     
-    final_df = final_df[["Codigo", "Link", "EspecificacionComprador", "EspecificacionProveedor", "OrganismoPublico", "Sucursal_Proveedor", "Pactivo", "Brand", "Presentación", "cantidad", "precioNeto", "totalLineaNeto", "FechaEnvio", "Mes", "Month", "Year", "Market_or_TA", "RutUnidadCompra", "CiudadUnidadCompra", "RutSucursal", "sector","Instituciones", "RegionUnidadCompra", "Tipo", "CodigoLicitacion", "CorporacionesPHT"]
+    final_df = final_df[["Codigo", "Link", "EspecificacionComprador", "EspecificacionProveedor","OrganismoPublico", "Sucursal_Proveedor", "Pactivo", "Brand", "Presentación", "cantidad", "precioNeto", "totalLineaNeto", "FechaEnvio", "Mes", "Month", "Year", "Market_or_TA", "RutUnidadCompra", "CiudadUnidadCompra", "RutSucursal", "sector","Instituciones", "RegionUnidadCompra", "Tipo", "CodigoLicitacion", "CorporacionesPHT"]
 ]
     
     return final_df
