@@ -127,6 +127,16 @@ def sucursal_matching(dataframe,ini_forget_time):
     final_df['Instituciones'] = final_df.apply(
         lambda row: 'Cenabast' if target_phrase in row['Razon_Social_Cliente'] else row['Instituciones'],
         axis=1)
+    
+    # Define a function to transform the column based on the condition
+    def transform_name(name):
+        if name.isupper():
+            return name.title()  # Convert to title case if all letters are uppercase
+        return name  # Return as is if not all uppercase
+
+    # Apply the function to the Razon_Social_Cliente column
+    final_df['Razon_Social_Cliente'] = final_df['Razon_Social_Cliente'].apply(transform_name)
+    
     final_df['cantidad'] = final_df['cantidad'].astype(int)
     final_df['precioNeto'] = final_df['precioNeto'].astype(int)
     final_df['totalLineaNeto'] = final_df['totalLineaNeto'].astype(int)
