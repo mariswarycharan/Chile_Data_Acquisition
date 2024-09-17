@@ -81,6 +81,8 @@ def sucursal_matching(dataframe,ini_forget_time):
     # Read the OrganismoPublico_Mapping and the main data file
     Organismo_Publico_mapping_file_path = 'Control/OrganismoPublico_Mapping.xlsx'
     organismo_mapping_df = pd.read_excel(Organismo_Publico_mapping_file_path)
+    
+    final_filtered_data['OrganismoPublico_Copy'] = final_filtered_data['OrganismoPublico']
 
     # Perform the mapping by merging both dataframes on the 'OrganismoPublico' column
     merged_df = pd.merge(final_filtered_data, organismo_mapping_df, on='OrganismoPublico', how='left')
@@ -106,8 +108,12 @@ def sucursal_matching(dataframe,ini_forget_time):
 
     # Apply the function to replace values in 'OrganismoPublico' based on 'UnidadCompra'
     final_df['OrganismoPublico'] = final_df.apply(check_and_replace, axis=1)
-
-
+    # Rename 'OrganismoPublico' to 'Razon_Social_Cliente'
+    final_df.rename(columns={'OrganismoPublico': 'Razon_Social_Cliente'}, inplace=True)
+    # Rename 'OrganismoPublico_Copy' to 'OrganismoPublico'
+    final_df.rename(columns={'OrganismoPublico_Copy': 'OrganismoPublico'}, inplace=True)
+    
+    
     sector_df = pd.read_excel('Control/Sector.xlsx')
 
     # Create a mapping dictionary from the Excel file
@@ -119,7 +125,7 @@ def sucursal_matching(dataframe,ini_forget_time):
 
     # Replacement logic based on the presence of the specific phrase
     final_df['Instituciones'] = final_df.apply(
-        lambda row: 'Cenabast' if target_phrase in row['OrganismoPublico'] else row['Instituciones'],
+        lambda row: 'Cenabast' if target_phrase in row['Razon_Social_Cliente'] else row['Instituciones'],
         axis=1)
     final_df['cantidad'] = final_df['cantidad'].astype(int)
     final_df['precioNeto'] = final_df['precioNeto'].astype(int)
@@ -131,8 +137,7 @@ def sucursal_matching(dataframe,ini_forget_time):
     final_df['totalLineaNeto'] = final_df['totalLineaNeto'].apply(lambda x: "{:,}".format(x))
     
     
-    final_df = final_df[["Codigo", "Link", "EspecificacionComprador", "EspecificacionProveedor","OrganismoPublico", "Sucursal_Proveedor", "Pactivo", "Brand", "Presentación", "cantidad", "precioNeto", "totalLineaNeto", "FechaEnvio", "Mes", "Month", "Year", "Market_or_TA", "RutUnidadCompra", "CiudadUnidadCompra", "RutSucursal", "sector","Instituciones", "RegionUnidadCompra", "Tipo", "CodigoLicitacion", "CorporacionesPHT"]
-]
+    final_df = final_df[["Codigo", "Link", "EspecificacionComprador", "EspecificacionProveedor","OrganismoPublico", "Razon_Social_Cliente","Sucursal_Proveedor", "Pactivo", "Brand", "Presentación", "cantidad", "precioNeto", "totalLineaNeto", "FechaEnvio", "Mes", "Month", "Year", "Market_or_TA", "RutUnidadCompra", "CiudadUnidadCompra", "RutSucursal", "sector","Instituciones", "RegionUnidadCompra", "Tipo", "CodigoLicitacion", "CorporacionesPHT"]]
     
     return final_df
 
