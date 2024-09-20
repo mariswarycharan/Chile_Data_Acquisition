@@ -52,7 +52,8 @@ def fuzzy_match_filtering(dataframe,ini_forget_time):
             ["Factor Recombinante"], ["Factor 7"], ["Factor Antihemofilico 7"], ["FACTOR VIII"],
             ["Complejo Anti-Inhibidor Fac VIII"], ["Factor Antihemofilico PM VIII"], ["Factor von Willebrand"],
             ["Factor Antihem PM VIII"], ["Fact Antihemofilico VIII"], ["MCT Fact Antihem VIII"],
-            ["MCT Fact.Antihem.VIII"], ["Haemate P"], ["WILATE"],["columvi"],["lucentis"], ["hemlibra"],["tascenso"], ["fingolimod hcl"]
+            ["MCT Fact.Antihem.VIII"], ["Haemate P"], ["WILATE"],["columvi"],["lucentis"], ["hemlibra"],["tascenso"], ["fingolimod hcl"], 
+            ["complej anti inh fac viii"],["MCT Fact Antihem VIII"], ["Complejo Anti Inhibidor Fac VIII"], ["mct fact antih viii"],["complej anti-inh fac viii"]
         ]
 
         molecules_in_string = [molecule_list for molecule_list in known_molecules
