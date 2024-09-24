@@ -45,7 +45,7 @@ def fuzzy_match_filtering(dataframe,ini_forget_time):
     # Function to extract molecules from the string, checking for known molecule combinations and exact matches
     def extract_molecules(product_string):
         known_molecules = [
-            ["Trastuzumab", "Emtansina"], ["Trastuzumab", "EMTANSINE"], ["Trastuzumab", "Emtancina"],
+            ["Trastuzumab", "Emtansina"], ["Trastuzumab", "EMTANSINE"], ["Trastuzumab", "Emtancina"],["TRASTUZUMAB","EMTANZSINA"], ["Trastuzumab", "etamsine"],
             ["Pertuzumab", "Trastuzumab"], ["TRASTUZUMAB", "EMTASINA"],["Peginterferon", "B" , "1A"],["Interferon", "B", "1A"],["INTERFERON", "BETA", "1A", "PEGILADO"],["INTERFERON", "BETA", "1A"],["INTERF B1A"],
             ["Factor", "Antihemofilico", "VII"], ["Factor", "Antihemofilico", "VIII"], ["Factor VII"], ["Factor VII A"],
             ["Factor Recombinante"], ["Factor 7"], ["Factor Antihemofilico 7"], ["FACTOR VIII"],
