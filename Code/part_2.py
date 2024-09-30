@@ -50,7 +50,7 @@ def fuzzy_match_filtering(dataframe,ini_forget_time):
             ["Factor", "Antihemofilico", "VII"], ["Factor", "Antihemofilico", "VIII"], ["Factor VII"], ["Factor VII A"],
             ["Factor Recombinante"], ["Factor 7"], ["Factor Antihemofilico 7"], ["FACTOR VIII"],
             ["Complejo Anti-Inhibidor Fac VIII"], ["Factor Antihemofilico PM VIII"], ["Factor von Willebrand"],
-            ["Factor Antihem PM VIII"], ["Fact Antihemofilico VIII"], ["MCT Fact Antihem VIII"],
+            ["Factor Antihem PM VIII"], ["Fact Antihemofilico VIII"], ["MCT FAC ANTIH VIII"],
             ["MCT Fact.Antihem.VIII"], ["Haemate P"], ["WILATE"],["columvi"],["lucentis"], ["hemlibra"],["tascenso"], ["fingolimod hcl"], 
             ["complej anti inh fac viii"],["MCT Fact Antihem VIII"], ["Complejo Anti Inhibidor Fac VIII"], ["mct fact antih viii"],["complej anti-inh fac viii"],["INFIZIMAB"]
         ]
