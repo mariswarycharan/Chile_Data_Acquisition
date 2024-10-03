@@ -41,11 +41,12 @@ def sucursal_matching(dataframe,ini_forget_time):
     # Fill blanks in 'Corporation Match' with values from 'NombreProveedor'
     final_bulk['CorporacionesPHT'] = final_bulk['CorporacionesPHT'].fillna(final_bulk['Sucursal'])
 
-    final_filtered_data = final_bulk.loc[final_bulk['codigoProductoONU'] != 46171610]
+    # final_filtered_data = final_bulk.loc[final_bulk['codigoProductoONU'] != 46171610]
+    final_filtered_data = final_bulk.loc[~final_bulk['codigoProductoONU'].isin([46171610, 26111722, 27111720])]
     
     final_filtered_data = final_filtered_data[~(
-        final_filtered_data['EspecificacionComprador'].str.contains(r'\(octaplex\)|\boctaplex\b', case=False, na=False) | 
-        final_filtered_data['EspecificacionProveedor'].str.contains(r'\(octaplex\)|\boctaplex\b', case=False, na=False)
+        final_filtered_data['EspecificacionComprador'].str.contains(r'\(octaplex\)|\boctaplex\b|\bneumococo\b', case=False, na=False) | 
+        final_filtered_data['EspecificacionProveedor'].str.contains(r'\(octaplex\)|\boctaplex\b|\bneumococo\b', case=False, na=False)
         )]
     
     # Dictionary to map English months to Spanish
