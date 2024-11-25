@@ -163,7 +163,7 @@ def sucursal_matching(dataframe,ini_forget_time):
 
     # Load the data from both Excel files
     final_df = final_df
-    mapping_data = pd.read_excel("Control/Market Basket from Chile Compra.xlsx", sheet_name="Comprador_MP")
+    mapping_data = pd.read_excel("Control/MP_Cbnt_Mapping.xlsx", sheet_name="Comprador_MP")
 
     final_df['RutUnidadCompra'] = final_df['RutUnidadCompra'].str.upper()
     mapping_data['Rut Comprador'] = mapping_data['Rut Comprador'].str.upper()
@@ -184,7 +184,7 @@ def sucursal_matching(dataframe,ini_forget_time):
 
     # Load the data from both Excel files
     final_df = final_df_compra_merged
-    mapping_data = pd.read_excel("Control/Market Basket from Chile Compra.xlsx", sheet_name="Proveedor_MP")
+    mapping_data = pd.read_excel("Control/MP_Cbnt_Mapping.xlsx", sheet_name="Proveedor_MP")
 
     final_df['RutSucursal'] = final_df['RutSucursal'].str.upper()
     mapping_data['Rut_Proveedor'] = mapping_data['Rut_Proveedor'].str.upper()
@@ -200,7 +200,7 @@ def sucursal_matching(dataframe,ini_forget_time):
 
     # Medida Maping
     final_data = final_df_sucursal_merged
-    mapping_data = pd.read_excel("Control/Market Basket from Chile Compra.xlsx", sheet_name="Mapping_Medida")
+    mapping_data = pd.read_excel("Control/MP_Cbnt_Mapping.xlsx", sheet_name="Mapping_Medida")
 
     final_data['Pactivo'] = final_data['Pactivo'].str.upper()
     mapping_data['Pactivo'] = mapping_data['Pactivo'].str.upper()
@@ -228,13 +228,8 @@ def sucursal_matching(dataframe,ini_forget_time):
     final_data_merged.rename(columns=columns_to_rename, inplace=True)
     final_data_merged['Pactivo+CorporacionesPHT'] = final_data_merged['Pactivo'].astype(str) + '-' + final_data_merged['CorporacionesPHT'].astype(str)
 
-
-    # Title case
-    columns_to_convert = ['Razon_Social_Cliente', 'Sucursal_Proveedor', 'Pactivo', 'Brand','CiudadUnidadCompra','CorporacionesPHT','Pactivo+CorporacionesPHT']
-    final_data_merged[columns_to_convert] = final_data_merged[columns_to_convert].apply(lambda x: x.str.title())
-
     # Mapping Intitución Destinataria Homologada
-    mapping_data = pd.read_excel("Control/Market Basket from Chile Compra.xlsx", sheet_name="Institucion_Destinataria")
+    mapping_data = pd.read_excel("Control/MP_Cbnt_Mapping.xlsx", sheet_name="Institucion_Destinataria")
 
     final_data_merged['Razon_Social_Cliente'] = final_data_merged['Razon_Social_Cliente'].str.upper()
     mapping_data['Institucion Destinataria'] = mapping_data['Institucion Destinataria'].str.upper()
@@ -243,6 +238,10 @@ def sucursal_matching(dataframe,ini_forget_time):
     final_df_merged_desintaria = final_data_merged.merge(mapping_data, left_on="Razon_Social_Cliente", right_on="Institucion Destinataria", how="left")
     final_df_merged_desintaria.drop('Institucion Destinataria', axis=1, inplace=True)
     final_df_merged_desintaria['Origin'] = 'MP'
+    
+    # Title case
+    columns_to_convert = ['Razon_Social_Cliente', 'Sucursal_Proveedor', 'Pactivo', 'Brand','CiudadUnidadCompra','CorporacionesPHT','Pactivo+CorporacionesPHT']
+    final_df_merged_desintaria[columns_to_convert] = final_df_merged_desintaria[columns_to_convert].apply(lambda x: x.str.title())
 
     final_df = final_df_merged_desintaria
     
