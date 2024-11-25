@@ -213,14 +213,15 @@ def sucursal_matching(dataframe,ini_forget_time):
 
     final_data_merged['Pactivo'] = final_data_merged['Pactivo'].str.title()
 
-    final_data_merged = final_data_merged[["Codigo", "EspecificacionComprador", "EspecificacionProveedor","Comprador","Proveedor", "Pactivo", "Brand", "UnidadMedida","Presentación", "cantidad", "precioNeto", "totalLineaNeto", "FechaEnvio", "Mes", "Month", "Year", "Market_or_TA", "RutUnidadCompra", "Comuna", "RutSucursal","Instituciones", "Region", "Region_Number","Tipo", "CodigoLicitacion", "Proveedor Asociado"]]
+    final_data_merged = final_data_merged[["Codigo", "EspecificacionComprador", "EspecificacionProveedor","Comprador","Proveedor", "Pactivo", "Brand", "UnidadMedida","Presentación", "cantidad", "precioNeto", "totalLineaNeto", "FechaEnvio", "Mes", "Month", "Year", "Market_or_TA", "RutUnidadCompra", "Comuna", "RutSucursal","sector","Instituciones", "Region", "Region_Number","Tipo", "CodigoLicitacion", "Proveedor Asociado"]]
 
     columns_to_rename = {
         'Comprador': 'Razon_Social_Cliente',
         'Comuna': 'CiudadUnidadCompra',
         'Region': 'RegionUnidadCompra',
         'Proveedor Asociado':'CorporacionesPHT',
-        'Proveedor':'Sucursal_Proveedor'
+        'Proveedor':'Sucursal_Proveedor',
+        'FechaEnvio':'Fecha'
     }
 
     # Rename the columns
