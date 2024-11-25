@@ -1,6 +1,8 @@
 from fuzzywuzzy import process, fuzz
 import pandas as pd
+import calendar
 import logging
+import calendar
 
 # Load the datasets
 from tqdm import tqdm 
@@ -146,9 +148,102 @@ def sucursal_matching(dataframe,ini_forget_time):
     final_df['cantidad'] = final_df['cantidad'].apply(lambda x: "{:,}".format(x))
     final_df['precioNeto'] = final_df['precioNeto'].apply(lambda x: "{:,}".format(x))
     final_df['totalLineaNeto'] = final_df['totalLineaNeto'].apply(lambda x: "{:,}".format(x))
-    
-    
+
+
     final_df = final_df[["Codigo", "Link", "EspecificacionComprador", "EspecificacionProveedor","OrganismoPublico", "Razon_Social_Cliente","Sucursal_Proveedor", "Pactivo", "Brand", "Presentación", "cantidad", "precioNeto", "totalLineaNeto", "FechaEnvio", "Mes", "Month", "Year", "Market_or_TA", "RutUnidadCompra", "CiudadUnidadCompra", "RutSucursal", "sector","Instituciones", "RegionUnidadCompra", "Tipo", "CodigoLicitacion", "CorporacionesPHT"]]
+    
+    month_column = 'Month'
+
+    # Check if the column exists in the DataFrame
+    if month_column in final_df.columns:
+        # Map month names to their corresponding numbers
+        final_df[month_column] = final_df[month_column].str.capitalize().map({month: i for i, month in enumerate(calendar.month_name) if month})
+
+    # Comprador Mapping
+
+    # Load the data from both Excel files
+    final_df = final_df
+    mapping_data = pd.read_excel("Control/Market Basket from Chile Compra.xlsx", sheet_name="Comprador_MP")
+
+    final_df['RutUnidadCompra'] = final_df['RutUnidadCompra'].str.upper()
+    mapping_data['Rut Comprador'] = mapping_data['Rut Comprador'].str.upper()
+
+    # Merge the 'final_df' dataframe with the 'mapping_data' dataframe based on the 'RutUnidadCompra' and 'Rut Comprador' columns
+    final_df_merged = final_df.merge(mapping_data, left_on="RutUnidadCompra", right_on="Rut Comprador", how="left")
+
+    # Drop the 'Rut Comprador' column as it's redundant after merging
+    final_df_merged.drop('Rut Comprador', axis=1, inplace=True)
+
+    final_df_merged['Comprador'] = final_df_merged['Comprador'].fillna(final_df_merged['Razon_Social_Cliente'])
+    final_df_merged['RutUnidadCompra'] = final_df_merged['RutUnidadCompra'].str.upper()
+
+    final_df_compra_merged = final_df_merged
+
+
+    #  Sucursal Mapping
+
+    # Load the data from both Excel files
+    final_df = final_df_compra_merged
+    mapping_data = pd.read_excel("Control/Market Basket from Chile Compra.xlsx", sheet_name="Proveedor_MP")
+
+    final_df['RutSucursal'] = final_df['RutSucursal'].str.upper()
+    mapping_data['Rut_Proveedor'] = mapping_data['Rut_Proveedor'].str.upper()
+
+    # Merge the 'final_df' dataframe with the 'mapping_data' dataframe based on the 'RutUnidadCompra' and 'Rut Comprador' columns
+    final_df_merged_sucursal = final_df.merge(mapping_data, left_on="RutSucursal", right_on="Rut_Proveedor", how="left")
+
+    final_df_merged_sucursal['Rut_Proveedor'] = final_df_merged_sucursal['Rut_Proveedor'].fillna(final_df_merged_sucursal['RutSucursal'])
+    final_df_merged_sucursal['Proveedor'] = final_df_merged_sucursal['Proveedor'].fillna(final_df_merged_sucursal['Sucursal_Proveedor'])
+    final_df_merged_sucursal['Proveedor Asociado'] = final_df_merged_sucursal['Proveedor Asociado'].fillna(final_df_merged_sucursal['CorporacionesPHT'])
+                                                                                
+    final_df_sucursal_merged = final_df_merged_sucursal
+
+    # Medida Maping
+    final_data = final_df_sucursal_merged
+    mapping_data = pd.read_excel("Control/Market Basket from Chile Compra.xlsx", sheet_name="Mapping_Medida")
+
+    final_data['Pactivo'] = final_data['Pactivo'].str.upper()
+    mapping_data['Pactivo'] = mapping_data['Pactivo'].str.upper()
+
+    # Merge the 'final_data' dataframe with the 'mapping_data' dataframe based on the 'RutUnidadCompra' and 'Rut Comprador' columns
+    final_data_merged = final_data.merge(mapping_data, left_on="Pactivo", right_on="Pactivo", how="left")
+
+    # Replace the value in UnidadMedida based on RutSucursal condition
+    final_data_merged.loc[final_data_merged['RutSucursal'] == '80.621.200-8', 'UnidadMedida'] = 'Comprimido'
+
+    final_data_merged['Pactivo'] = final_data_merged['Pactivo'].str.title()
+
+    final_data_merged = final_data_merged[["Codigo", "EspecificacionComprador", "EspecificacionProveedor","Comprador","Proveedor", "Pactivo", "Brand", "UnidadMedida","Presentación", "cantidad", "precioNeto", "totalLineaNeto", "FechaEnvio", "Mes", "Month", "Year", "Market_or_TA", "RutUnidadCompra", "Comuna", "RutSucursal","Instituciones", "Region", "Region_Number","Tipo", "CodigoLicitacion", "Proveedor Asociado"]]
+
+    columns_to_rename = {
+        'Comprador': 'Razon_Social_Cliente',
+        'Comuna': 'CiudadUnidadCompra',
+        'Region': 'RegionUnidadCompra',
+        'Proveedor Asociado':'CorporacionesPHT',
+        'Proveedor':'Sucursal_Proveedor'
+    }
+
+    # Rename the columns
+    final_data_merged.rename(columns=columns_to_rename, inplace=True)
+    final_data_merged['Pactivo+CorporacionesPHT'] = final_data_merged['Pactivo'].astype(str) + '-' + final_data_merged['CorporacionesPHT'].astype(str)
+
+
+    # Title case
+    columns_to_convert = ['Razon_Social_Cliente', 'Sucursal_Proveedor', 'Pactivo', 'Brand','CiudadUnidadCompra','CorporacionesPHT','Pactivo+CorporacionesPHT']
+    final_data_merged[columns_to_convert] = final_data_merged[columns_to_convert].apply(lambda x: x.str.title())
+
+    # Mapping Intitución Destinataria Homologada
+    mapping_data = pd.read_excel("Control/Market Basket from Chile Compra.xlsx", sheet_name="Institucion_Destinataria")
+
+    final_data_merged['Razon_Social_Cliente'] = final_data_merged['Razon_Social_Cliente'].str.upper()
+    mapping_data['Institucion Destinataria'] = mapping_data['Institucion Destinataria'].str.upper()
+
+    
+    final_df_merged_desintaria = final_data_merged.merge(mapping_data, left_on="Razon_Social_Cliente", right_on="Institucion Destinataria", how="left")
+    final_df_merged_desintaria.drop('Institucion Destinataria', axis=1, inplace=True)
+    final_df_merged_desintaria['Origin'] = 'MP'
+
+    final_df = final_df_merged_desintaria
     
     return final_df
 
