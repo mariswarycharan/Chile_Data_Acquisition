@@ -151,6 +151,8 @@ def sucursal_matching(dataframe,ini_forget_time):
 
 
     final_df = final_df[["Codigo", "Link", "EspecificacionComprador", "EspecificacionProveedor","OrganismoPublico", "Razon_Social_Cliente","Sucursal_Proveedor", "Pactivo", "Brand", "Presentación", "cantidad", "precioNeto", "totalLineaNeto", "FechaEnvio", "Mes", "Month", "Year", "Market_or_TA", "RutUnidadCompra", "CiudadUnidadCompra", "RutSucursal", "sector","Instituciones", "RegionUnidadCompra", "Tipo", "CodigoLicitacion", "CorporacionesPHT"]]
+   
+   
     
     month_column = 'Month'
 
@@ -161,7 +163,7 @@ def sucursal_matching(dataframe,ini_forget_time):
 
     # Comprador Mapping
 
-    # Load the data from both Excel files
+    # Load the data from both files
     final_df = final_df
     mapping_data = pd.read_excel("Control/MP_Cbnt_Mapping.xlsx", sheet_name="Comprador_MP")
 
@@ -189,7 +191,7 @@ def sucursal_matching(dataframe,ini_forget_time):
     final_df['RutSucursal'] = final_df['RutSucursal'].str.upper()
     mapping_data['Rut_Proveedor'] = mapping_data['Rut_Proveedor'].str.upper()
 
-    # Merge the 'final_df' dataframe with the 'mapping_data' dataframe based on the 'RutUnidadCompra' and 'Rut Comprador' columns
+    # Merge the 'final_df' dataframe with the 'mapping_data' dataframe based on the 'RutSucursal' and 'Rut_Proveedor' columns
     final_df_merged_sucursal = final_df.merge(mapping_data, left_on="RutSucursal", right_on="Rut_Proveedor", how="left")
 
     final_df_merged_sucursal['Rut_Proveedor'] = final_df_merged_sucursal['Rut_Proveedor'].fillna(final_df_merged_sucursal['RutSucursal'])
@@ -205,7 +207,7 @@ def sucursal_matching(dataframe,ini_forget_time):
     final_data['Pactivo'] = final_data['Pactivo'].str.upper()
     mapping_data['Pactivo'] = mapping_data['Pactivo'].str.upper()
 
-    # Merge the 'final_data' dataframe with the 'mapping_data' dataframe based on the 'RutUnidadCompra' and 'Rut Comprador' columns
+    # Merge the 'final_data_merged' dataframe with the 'Pactivo' dataframe based on the 'Pactivo' column
     final_data_merged = final_data.merge(mapping_data, left_on="Pactivo", right_on="Pactivo", how="left")
 
     # Replace the value in UnidadMedida based on RutSucursal condition
@@ -218,7 +220,6 @@ def sucursal_matching(dataframe,ini_forget_time):
     columns_to_rename = {
         'Comprador': 'Razon_Social_Cliente',
         'Comuna': 'CiudadUnidadCompra',
-        'Region': 'RegionUnidadCompra',
         'Proveedor Asociado':'CorporacionesPHT',
         'Proveedor':'Sucursal_Proveedor',
         'FechaEnvio':'Fecha'
@@ -226,6 +227,7 @@ def sucursal_matching(dataframe,ini_forget_time):
 
     # Rename the columns
     final_data_merged.rename(columns=columns_to_rename, inplace=True)
+    # Create the Pactivo+CorporacionesPHT column
     final_data_merged['Pactivo+CorporacionesPHT'] = final_data_merged['Pactivo'].astype(str) + '-' + final_data_merged['CorporacionesPHT'].astype(str)
 
     # Mapping Intitución Destinataria Homologada
@@ -243,7 +245,8 @@ def sucursal_matching(dataframe,ini_forget_time):
     columns_to_convert = ['Razon_Social_Cliente', 'Sucursal_Proveedor', 'Pactivo', 'Brand','CiudadUnidadCompra','CorporacionesPHT','Pactivo+CorporacionesPHT']
     final_df_merged_desintaria[columns_to_convert] = final_df_merged_desintaria[columns_to_convert].apply(lambda x: x.str.title())
 
-    final_df = final_df_merged_desintaria
+    chile_combined = final_df_merged_desintaria 
     
-    return final_df
+    final_df_merged_desintaria = final_df_merged_desintaria[["Year", "Month", "Region", "CorporacionesPHT", "Pactivo", "totalLineaNeto", "Market_or_TA", "Mes", "Intitución Destinataria Homologada", "Pactivo+CorporacionesPHT", "Origin", "cantidad"]]
+    return final_df_merged_desintaria
 
