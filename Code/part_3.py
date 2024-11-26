@@ -152,7 +152,7 @@ def sucursal_matching(dataframe,ini_forget_time):
 
     final_df = final_df[["Codigo", "Link", "EspecificacionComprador", "EspecificacionProveedor","OrganismoPublico", "Razon_Social_Cliente","Sucursal_Proveedor", "Pactivo", "Brand", "Presentación", "cantidad", "precioNeto", "totalLineaNeto", "FechaEnvio", "Mes", "Month", "Year", "Market_or_TA", "RutUnidadCompra", "CiudadUnidadCompra", "RutSucursal", "sector","Instituciones", "RegionUnidadCompra", "Tipo", "CodigoLicitacion", "CorporacionesPHT"]]
    
-   
+    Pharmatender_final_df = final_df.copy()
     
     month_column = 'Month'
 
@@ -245,8 +245,9 @@ def sucursal_matching(dataframe,ini_forget_time):
     columns_to_convert = ['Razon_Social_Cliente', 'Sucursal_Proveedor', 'Pactivo', 'Brand','CiudadUnidadCompra','CorporacionesPHT','Pactivo+CorporacionesPHT']
     final_df_merged_desintaria[columns_to_convert] = final_df_merged_desintaria[columns_to_convert].apply(lambda x: x.str.title())
 
-    chile_combined = final_df_merged_desintaria 
+    chile_combined_df = final_df_merged_desintaria 
     
     final_df_merged_desintaria = final_df_merged_desintaria[["Year", "Month", "Region", "CorporacionesPHT", "Pactivo", "totalLineaNeto", "Market_or_TA", "Mes", "Intitución Destinataria Homologada", "Pactivo+CorporacionesPHT", "Origin", "cantidad"]]
-    return final_df_merged_desintaria
+    
+    return Pharmatender_final_df,chile_combined_df,final_df_merged_desintaria
 

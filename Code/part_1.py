@@ -190,7 +190,10 @@ def process_csv(csv_path):
         os.makedirs("Output")
     initial_output_path = "Output/"
     try:
-        processed_df = pd.read_csv('temp/' + csv_path, delimiter=';', encoding='latin1',low_memory=False)
+        try:
+            processed_df = pd.read_csv('temp/' + csv_path, delimiter=';', encoding='latin1',low_memory=False)
+        except:
+            processed_df = pd.read_csv('temp/' + csv_path)
         logging.info(f"File {csv_path} read successfully.")
         logging.info(f"Initial DataFrame shape: {processed_df.shape}")
         logging.info(f"Initial DataFrame head:\n{processed_df.head()}")
@@ -236,16 +239,34 @@ def process_csv(csv_path):
             logging.info(f"fuzzy_match_filtering started ...")
             dataframe_fuzzy_match = fuzzy_match_filtering(processed_df,ini_forget_time)
             logging.info(f"Sucursal matching completed ...")
-            final_dataframe = sucursal_matching(dataframe_fuzzy_match,ini_forget_time)
+            Pharmatender_final_df , chile_combined_df , final_df_merged_desintaria = sucursal_matching(dataframe_fuzzy_match,ini_forget_time)
             
             formatted_time = datetime.now().strftime("%Y.%m.%d_%H.%M.%S_")
             final_file_path = initial_output_path + formatted_time + '' + csv_path
-        
-            final_dataframe.to_csv(final_file_path, index=False, encoding='utf-8-sig',chunksize=1000000)
+    
+            if not os.path.exists(initial_output_path + "/Pharmatender_Format"):
+                os.makedirs(initial_output_path + "/Pharmatender_Format")
+                
+            Pharmatender_final_df.to_csv(initial_output_path + "/Pharmatender_Format/" + formatted_time + '' + csv_path, index=False, encoding='utf-8-sig',chunksize=1000000)
+                        
+            if not os.path.exists(initial_output_path + "/Chile_Combined_Format"):
+                os.makedirs(initial_output_path + "/Chile_Combined_Format")
+                
+            chile_combined_df.to_csv(initial_output_path + "/Chile_Combined_Format/" + formatted_time + '' + csv_path, index=False, encoding='utf-8-sig',chunksize=1000000)
+                        
+            if not os.path.exists(initial_output_path + "/Combinación_Vertical"):
+                os.makedirs(initial_output_path + "/Combinación_Vertical")
+                
+            final_df_merged_desintaria.to_csv(initial_output_path + "/Combinación_Vertical/" + formatted_time + '' + csv_path, index=False, encoding='utf-8-sig',chunksize=1000000)
             
             logging.info(f'Processed and cleaned data saved to {final_file_path}')
-            logging.info(f"Final DataFrame shape: {final_dataframe.shape}")
-            logging.info(f"Final DataFrame head:\n{final_dataframe.head()}")
+            logging.info(f"Final DataFrame shape: {Pharmatender_final_df.shape}")
+            logging.info(f"Final DataFrame head:\n{Pharmatender_final_df.head()}")
+            logging.info(f"Chile DataFrame shape: {chile_combined_df.shape}")
+            logging.info(f"Chile DataFrame head:\n{chile_combined_df.head()}")
+            logging.info(f"Desintaria DataFrame shape: {final_df_merged_desintaria.shape}")
+            logging.info(f"Desintaria DataFrame head:\n{final_df_merged_desintaria.head()}")
+            
         except Exception as e:
             logging.error(f"Error writing the file: {e}")
             
