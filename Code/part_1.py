@@ -31,13 +31,15 @@ logging.basicConfig(filename='log/' + ini_forget_time + '_process.log', level=lo
 def verify_columns(df, required_columns):
     """ Verify if the required columns are present in the DataFrame """
  
-    if required_columns != df.columns:
+    if required_columns != list(df.columns):
         logging.error(f"Missing columns:  {df.columns} and Actual columns are {required_columns} , by mistake written columns are {df.columns} and please check column names are correct")
         # raise ValueError(f"Missing columns: {missing_columns} and Actual columns are {required_columns} , by mistake written columns are {df.columns}")
         return False
     else:
         logging.info(f"All required columns are present ==> columns are {df.columns}")
         return True
+    
+
  
 def download_data():
     try:
@@ -49,11 +51,12 @@ def download_data():
            
             Controll_file_Link = pd.read_excel(xls, sheet_name="Link")
             Controll_file_Month = pd.read_excel(xls, sheet_name="Month")
-           
-            if verify_columns(Controll_file_Link, ['Downloadable_Link']) and verify_columns(Controll_file_Month, ['Month']):
+
+            if verify_columns(Controll_file_Link, ['Downloadable_Link']) and verify_columns(Controll_file_Month, ['Month' , 'Cenabast_File_Url']):
                
                 URL_starting = Controll_file_Link['Downloadable_Link'][0]
                 Month_list = list(Controll_file_Month['Month'])
+                
                
             else:
                 logging.error(f"Missing columns:  {Controll_file_Link.columns} and {Controll_file_Month.columns} and please check column names are correct")
@@ -67,7 +70,9 @@ def download_data():
         if  os.path.exists("temp"):
             # Delete the temp folder
             shutil.rmtree("temp")
- 
+
+        print(Month_list)
+        
         for year_month in Month_list:
             # Replace year and month in the URL
             url = URL_starting + year_month + ".zip"
