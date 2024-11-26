@@ -1,4 +1,10 @@
 pandas
-boto3
 tqdm
-ray
+ray[default]==2.35.0
+beautifulsoup4
+modin
+pyarrow
+openpyxl
+swifter==1.4.0
+fuzzywuzzy[speedup]==0.18.0
+mapply==0.1.26
