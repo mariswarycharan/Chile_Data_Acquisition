@@ -16,6 +16,7 @@ import time
 import ray
 from part_2 import fuzzy_match_filtering
 from part_3 import sucursal_matching
+from Chile_Data_Acquisition_Cenabast.Code.Chile import Chile_Data_Acquisition_Cenabast_data
 
 ray.init()  
 
@@ -183,7 +184,7 @@ def price_check_verification(id,price_from_csv):
     else:
         return 0
 
-def process_csv(csv_path):
+def process_csv(csv_path , Cenabast_File_Url ):
     
     print(f'Processing file : {csv_path}')
     if not os.path.exists("Output"):
@@ -240,6 +241,11 @@ def process_csv(csv_path):
             dataframe_fuzzy_match = fuzzy_match_filtering(processed_df,ini_forget_time)
             logging.info(f"Sucursal matching completed ...")
             Pharmatender_final_df , chile_combined_df , final_df_merged_desintaria = sucursal_matching(dataframe_fuzzy_match,ini_forget_time)
+
+            chile_combined_df_2 , final_df_merged_desintaria_2 = Chile_Data_Acquisition_Cenabast_data(Cenabast_File_Url)
+            
+            chile_combined_df = pd.concat([chile_combined_df , chile_combined_df_2] , ignore_index=True)
+            final_df_merged_desintaria = pd.concat([final_df_merged_desintaria , final_df_merged_desintaria_2] , ignore_index=True)
             
             formatted_time = datetime.now().strftime("%Y.%m.%d_%H.%M.%S_")
             final_file_path = initial_output_path + formatted_time + '' + csv_path
@@ -296,8 +302,13 @@ def Cleaning_Data():
        
     csv_files = os.listdir("temp")
     
-    for file in tqdm(csv_files):
-        process_csv(file)
+    Control_File_Month = pd.read_excel(r"Control\Control_File.xlsx" , sheet_name="Month")
+    
+    Cenabast_File_Url_list = list(zip(Control_File_Month['Cenabast_File_Url'].to_list(),Control_File_Month['Month'].to_list()))
+    
+    
+    for file,Cenabast_File_Url in tqdm(zip(csv_files,Cenabast_File_Url_list)):
+        process_csv(file,Cenabast_File_Url)
  
     # # Create a progress bar
     # with tqdm(total=len(csv_files), desc="Processing files") as progress_bar:
