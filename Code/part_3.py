@@ -239,6 +239,7 @@ def sucursal_matching(dataframe,ini_forget_time):
     
     final_df_merged_desintaria = final_data_merged.merge(mapping_data, left_on="Razon_Social_Cliente", right_on="Institucion Destinataria", how="left")
     final_df_merged_desintaria.drop('Institucion Destinataria', axis=1, inplace=True)
+    final_df_merged_desintaria['Intitución Destinataria Homologada'] = final_df_merged_desintaria['Intitución Destinataria Homologada'].fillna(final_df_merged_sucursal['Razon_Social_Cliente'])
     final_df_merged_desintaria['Origin'] = 'MP'
     
     # Title case

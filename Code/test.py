@@ -12,6 +12,10 @@ initial_output_path = "Output"
 
 if not os.path.exists(initial_output_path):
     os.makedirs(initial_output_path)
+    
+log_folder = "log"
+if not os.path.exists(log_folder):
+    os.makedirs(log_folder)
 
 Control_File_Month = pd.read_excel(r"Control\Control_File.xlsx" , sheet_name="Month")
     
