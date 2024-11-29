@@ -52,7 +52,7 @@ def download_data():
             Controll_file_Link = pd.read_excel(xls, sheet_name="Link")
             Controll_file_Month = pd.read_excel(xls, sheet_name="Month")
 
-            if verify_columns(Controll_file_Link, ['Downloadable_Link']) and verify_columns(Controll_file_Month, ['Month' , 'Cenabast_File_Url']):
+            if verify_columns(Controll_file_Link, ['Downloadable_Link']) and verify_columns(Controll_file_Month, ['Month' , 'Cenabast_File_Url','* (https://drive.google.com/drive/folders/1n6RlnUCTwVSI6NBtp83K1VNYRpw1P4-f)  => Locate the specified month and year link in the column Cenabast_File_Url for Cenabast from the drive link.']):
                
                 URL_starting = Controll_file_Link['Downloadable_Link'][0]
                 Month_list = list(Controll_file_Month['Month'])

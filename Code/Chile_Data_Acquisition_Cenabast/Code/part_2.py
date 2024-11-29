@@ -35,7 +35,7 @@ def Mapping_File_Format(dataframe):
 
     # Load the data
     out_with_rut_df = data
-    comprador_cenabast_df = pd.read_excel('Code/Chile_Data_Acquisition_Cenabast/Control/Cnbt_Mapping.xlsx', sheet_name='Comprador_Cnbt')
+    comprador_cenabast_df = pd.read_excel('Control/Cenabast_Mapping.xlsx', sheet_name='Comprador_Cnbt')
 
     # Merge the dataframes ensuring the original rows of 'Out with Rut Comprador.xlsx' are unchanged
     merged_df = out_with_rut_df.merge(comprador_cenabast_df[['Nombre cliente solicitante', 'Comprador', 'Segmento Comprador']],
@@ -50,7 +50,7 @@ def Mapping_File_Format(dataframe):
 
     # Load the data
     out_with_rut_comprador = merged_df
-    proveedor_cenabast_df = pd.read_excel('Code/Chile_Data_Acquisition_Cenabast/Control/Cnbt_Mapping.xlsx', sheet_name='Proveedor_Cnbt')
+    proveedor_cenabast_df = pd.read_excel('Control/Cenabast_Mapping.xlsx', sheet_name='Proveedor_Cnbt')
 
     # Merge the dataframes ensuring the original rows of 'Out with Rut Comprador.xlsx' are unchanged
     merged_df_2 =out_with_rut_comprador.merge(proveedor_cenabast_df[['Nombre proveedor', 'Rut_Proveedor', 'Proveedor', 'Proveedor Asociado']],
@@ -67,7 +67,7 @@ def Mapping_File_Format(dataframe):
 
     # Load the data from both Excel files
     merged_df_3 = merged_df_2
-    Institucion_Destinataria_mapping_data = pd.read_excel('Code/Chile_Data_Acquisition_Cenabast/Control/Cnbt_Mapping.xlsx', sheet_name='Institucion_Destinataria')
+    Institucion_Destinataria_mapping_data = pd.read_excel('Control/Cenabast_Mapping.xlsx', sheet_name='Institucion_Destinataria')
 
 
     merged_df_3['Nombre cliente destinatario'] = merged_df_3['Nombre cliente destinatario'].str.upper()
@@ -75,7 +75,7 @@ def Mapping_File_Format(dataframe):
 
     # Merge the 'data_2024' dataframe with the 'mapping_data' dataframe based on the 'RutUnidadCompra' and 'Rut Comprador' columns
     merged_df_4 = merged_df_3.merge(Institucion_Destinataria_mapping_data, left_on="Nombre cliente destinatario", right_on="Institucion Destinataria", how="left")
-
+    
     from datetime import datetime
     # Convert the "Fecha de entrega" column to a short date format
 
@@ -83,7 +83,7 @@ def Mapping_File_Format(dataframe):
 
     # Medida Maping
     final_data_merged = merged_df_4
-    mapping_data = pd.read_excel("Code/Chile_Data_Acquisition_Cenabast/Control/Cnbt_Mapping.xlsx", sheet_name="Mapping_Medida")
+    mapping_data = pd.read_excel("Control/Cenabast_Mapping.xlsx", sheet_name="Mapping_Medida")
 
     final_data_merged['Pactivo'] = final_data_merged['Pactivo'].str.upper()
     mapping_data['Pactivo'] = mapping_data['Pactivo'].str.upper()
@@ -98,7 +98,7 @@ def Mapping_File_Format(dataframe):
 
     # Load the data from both Excel files
     data_with_market_ta = final_data_merged
-    mapping_data = pd.read_excel("Code/Chile_Data_Acquisition_Cenabast/Control/Cnbt_Mapping.xlsx", sheet_name="Final Market Basket")
+    mapping_data = pd.read_excel("Control/Cenabast_Mapping.xlsx", sheet_name="Final Market Basket")
 
     data_with_market_ta['Pactivo'] = data_with_market_ta['Pactivo'].str.upper()
     mapping_data['Pactivo'] = mapping_data['Pactivo'].str.upper()
@@ -181,6 +181,9 @@ def Mapping_File_Format(dataframe):
         'XV': 15,
         'XVI': 16,
     }
+
+    final_data['Intitución Destinataria Homologada'] = final_data['Intitución Destinataria Homologada'].fillna(final_data['Razon_Social_Cliente'])
+
 
     # Replace 'Region_Number' column values using the dictionary
     final_data['Region_Number'] = final_data['Region_Number'].map(Region_Number_2)

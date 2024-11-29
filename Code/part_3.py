@@ -14,7 +14,7 @@ def sucursal_matching(dataframe,ini_forget_time):
                     format='%(asctime)s - %(levelname)s - %(message)s')
    
     final_bulk = dataframe
-    proveedor_mapping = pd.read_excel('Control/Proveedor Mapping.xlsx')
+    proveedor_mapping = pd.read_excel('Control/Proveedor_Mapping.xlsx')
     market_basket_df = pd.read_excel("Control/New_Market_Basket.xlsx")
 
     # Function to perform fuzzy matching with Token Set Ratio and return original name if the score is below the threshold
@@ -165,7 +165,7 @@ def sucursal_matching(dataframe,ini_forget_time):
 
     # Load the data from both files
     final_df = final_df
-    mapping_data = pd.read_excel("Control/MP_Cbnt_Mapping.xlsx", sheet_name="Comprador_MP")
+    mapping_data = pd.read_excel("Control/Mercado_Publico_Mapping.xlsx", sheet_name="Comprador_MP")
 
     final_df['RutUnidadCompra'] = final_df['RutUnidadCompra'].str.upper()
     mapping_data['Rut Comprador'] = mapping_data['Rut Comprador'].str.upper()
@@ -186,7 +186,7 @@ def sucursal_matching(dataframe,ini_forget_time):
 
     # Load the data from both Excel files
     final_df = final_df_compra_merged
-    mapping_data = pd.read_excel("Control/MP_Cbnt_Mapping.xlsx", sheet_name="Proveedor_MP")
+    mapping_data = pd.read_excel("Control/Mercado_Publico_Mapping.xlsx", sheet_name="Proveedor_MP")
 
     final_df['RutSucursal'] = final_df['RutSucursal'].str.upper()
     mapping_data['Rut_Proveedor'] = mapping_data['Rut_Proveedor'].str.upper()
@@ -202,7 +202,7 @@ def sucursal_matching(dataframe,ini_forget_time):
 
     # Medida Maping
     final_data = final_df_sucursal_merged
-    mapping_data = pd.read_excel("Control/MP_Cbnt_Mapping.xlsx", sheet_name="Mapping_Medida")
+    mapping_data = pd.read_excel("Control/Mercado_Publico_Mapping.xlsx", sheet_name="Mapping_Medida")
 
     final_data['Pactivo'] = final_data['Pactivo'].str.upper()
     mapping_data['Pactivo'] = mapping_data['Pactivo'].str.upper()
@@ -231,7 +231,7 @@ def sucursal_matching(dataframe,ini_forget_time):
     final_data_merged['Pactivo+CorporacionesPHT'] = final_data_merged['Pactivo'].astype(str) + '-' + final_data_merged['CorporacionesPHT'].astype(str)
 
     # Mapping Intitución Destinataria Homologada
-    mapping_data = pd.read_excel("Control/MP_Cbnt_Mapping.xlsx", sheet_name="Institucion_Destinataria")
+    mapping_data = pd.read_excel("Control/Mercado_Publico_Mapping.xlsx", sheet_name="Institucion_Destinataria")
 
     final_data_merged['Razon_Social_Cliente'] = final_data_merged['Razon_Social_Cliente'].str.upper()
     mapping_data['Institucion Destinataria'] = mapping_data['Institucion Destinataria'].str.upper()
