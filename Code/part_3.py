@@ -140,6 +140,11 @@ def sucursal_matching(dataframe,ini_forget_time):
     # Apply the function to the Razon_Social_Cliente column
     final_df['Razon_Social_Cliente'] = final_df['Razon_Social_Cliente'].apply(transform_name)
     
+    final_df['totalLineaNeto'] = final_df.apply(
+    lambda row: row['cantidad'] * row['precioNeto'] if pd.isna(row['totalLineaNeto']) else row['totalLineaNeto'],
+    axis=1
+    )
+    
     final_df['cantidad'] = final_df['cantidad'].astype(int)
     final_df['precioNeto'] = final_df['precioNeto'].astype(int)
     final_df['totalLineaNeto'] = final_df['totalLineaNeto'].astype(int)
