@@ -250,5 +250,13 @@ def sucursal_matching(dataframe,ini_forget_time):
     
     final_df_merged_desintaria = final_df_merged_desintaria[["Year", "Month", "Region", "CorporacionesPHT", "Pactivo", "totalLineaNeto", "Market_or_TA", "Mes", "Intitución Destinataria Homologada", "Pactivo+CorporacionesPHT", "Origin", "cantidad"]]
     
+    chile_combined_df['Fecha'] = pd.to_datetime(
+                                chile_combined_df['Fecha'], 
+                                format='%d-%m-%Y',  # Adjust format to match your date format
+                                errors='coerce'     # Optionally set to 'coerce' to handle invalid dates gracefully
+                            ).dt.strftime('%d/%m/%Y')  # Convert back to the desired format
+
+
+    
     return Pharmatender_final_df,chile_combined_df,final_df_merged_desintaria
 

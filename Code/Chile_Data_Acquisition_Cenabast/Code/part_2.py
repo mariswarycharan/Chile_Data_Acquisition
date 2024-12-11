@@ -228,5 +228,12 @@ def Mapping_File_Format(dataframe):
     final_Combinacion_Vertical = final_data[["Year", "Month", "Region", "CorporacionesPHT", "Pactivo", "totalLineaNeto", "Market_or_TA", "Mes", "Intitución Destinataria Homologada", "Pactivo+CorporacionesPHT", "Origin","cantidad"]]
     # Save the modified DataFrame to an Excel file
 
+    final_data['Fecha'] = pd.to_datetime(
+                            final_data['Fecha'], 
+                            format='%d-%m-%Y',  # Adjust format to match your date format
+                            errors='coerce'     # Optionally set to 'coerce' to handle invalid dates gracefully
+                        ).dt.strftime('%d/%m/%Y')  # Convert back to the desired format
+
+    
     return final_data , final_Combinacion_Vertical
 
