@@ -14,7 +14,7 @@ def Chile_Data_Acquisition_Cenabast_data(Url_Month_turple):
         url = Cenabast_File_Url.split("edit")[0] + "export?format=xlsx"      
         Month = int(str(Month).split("-")[1])
                 
-        df = pd.read_excel(r"D:\Downloads\Cenabast(1-9).xlsx")
+        df = pd.read_excel(url)
         
         filter_month_df = df[df['Mes'].isin([Month])]
         
