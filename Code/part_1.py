@@ -282,20 +282,21 @@ def process_csv(csv_path , Cenabast_File_Url ):
             logging.error(f"Error writing the file: {e}")
             
         
-        sorted_processed_df = processed_df.sort_values(by=['totalLineaNeto'])
+        # sorted_processed_df = processed_df.sort_values(by=['totalLineaNeto'])
         
-        for i in range(0,5):
-            val = sorted_processed_df.iloc[i]
+        # ----------------------- price check is not needed for now -----------------------
+        # for i in range(0,5):
+        #     val = sorted_processed_df.iloc[i]
             
-            result_check = price_check_verification(val['Codigo'],val['totalLineaNeto'])
+        #     result_check = price_check_verification(val['Codigo'],val['totalLineaNeto'])
             
-            if result_check == True:
-                print(f'Price check passed for {val["Codigo"]}')
-                logging.info(f'Price check passed for {val["Codigo"]}')
-                break
-            else:
-                print(f'Price check failed for {val["Codigo"]}')
-                logging.info(f'Price check failed for {val["Codigo"]}')
+        #     if result_check == True:
+        #         print(f'Price check passed for {val["Codigo"]}')
+        #         logging.info(f'Price check passed for {val["Codigo"]}')
+        #         break
+        #     else:
+        #         print(f'Price check failed for {val["Codigo"]}')
+        #         logging.info(f'Price check failed for {val["Codigo"]}')
         
     else:
         logging.warning(f"No data to save for {csv_path}.")
