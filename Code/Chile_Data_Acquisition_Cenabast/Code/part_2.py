@@ -1,5 +1,8 @@
 #Rut Comprador
 import pandas as pd
+import warnings
+
+warnings.filterwarnings("ignore")
 
 # Function to calculate and format RUT check digit
 def calculate_rut_check_digit(rut):
@@ -31,6 +34,7 @@ def Mapping_File_Format(dataframe):
     else:
         print("Column 'Cliente solicitante' not found in the data.")
 
+    print("Shape of data after calculate_rut_check_digit : ",data.shape)
     # Comprador Mapping
 
     # Load the data
@@ -42,6 +46,8 @@ def Mapping_File_Format(dataframe):
                                     on='Nombre cliente solicitante',
                                     how='left')
 
+    print("Shape of merged_df after merge: ", merged_df.shape)
+    
     # Replace empty 'Comprador' values with 'Nombre cliente solicitante' values
     merged_df['Comprador'] = merged_df['Comprador'].fillna(merged_df['Nombre cliente solicitante'])
 
@@ -56,6 +62,8 @@ def Mapping_File_Format(dataframe):
     merged_df_2 =out_with_rut_comprador.merge(proveedor_cenabast_df[['Nombre proveedor', 'Rut_Proveedor', 'Proveedor', 'Proveedor Asociado']],
                                     on='Nombre proveedor',
                                     how='left')
+    
+    print("Shape of merged_df_2 after merge: ", merged_df_2.shape)
 
     # Replace empty 'Proveedor' values with 'Nombre proveedor' values
     merged_df_2['Proveedor'] = merged_df_2['Proveedor'].fillna(merged_df['Nombre proveedor'])
@@ -76,6 +84,8 @@ def Mapping_File_Format(dataframe):
     # Merge the 'data_2024' dataframe with the 'mapping_data' dataframe based on the 'RutUnidadCompra' and 'Rut Comprador' columns
     merged_df_4 = merged_df_3.merge(Institucion_Destinataria_mapping_data, left_on="Nombre cliente destinatario", right_on="Institucion Destinataria", how="left")
     
+    print("Shape of merged_df_4 after merge: ", merged_df_4.shape)
+    
     from datetime import datetime
     # Convert the "Fecha de entrega" column to a short date format
 
@@ -91,6 +101,8 @@ def Mapping_File_Format(dataframe):
     # Merge the 'final_data_merged' dataframe with the 'Pactivo' dataframe based on the 'Pactivo' column
     final_data_merged = final_data_merged.merge(mapping_data, left_on="Pactivo", right_on="Pactivo", how="left")
 
+    print("Shape of final_data_merged after merge: ", final_data_merged.shape)
+    
     # Replace the value in UnidadMedida based on Rut_Proveedor condition
     final_data_merged.loc[final_data_merged['Rut_Proveedor'] == '80.621.200-8', 'UnidadMedida'] = 'Comprimido'
 
@@ -98,21 +110,28 @@ def Mapping_File_Format(dataframe):
 
     # Load the data from both Excel files
     data_with_market_ta = final_data_merged
-    mapping_data = pd.read_excel("Control/Cenabast_Mapping.xlsx", sheet_name="Final Market Basket")
+    # mapping_data = pd.read_excel("Control/Cenabast_Mapping.xlsx", sheet_name="Final Market Basket")
 
-    data_with_market_ta['Pactivo'] = data_with_market_ta['Pactivo'].str.upper()
-    mapping_data['Pactivo'] = mapping_data['Pactivo'].str.upper()
+    data_with_market_ta['Pactivo'] = data_with_market_ta['Pactivo'].str.lower()
+    
+    # mapping_data['Pactivo'] = mapping_data['Pactivo'].str.upper()
 
     # Merge the 'data_with_market_ta' dataframe with the 'mapping_data' dataframe based on the 'RutUnidadCompra' and 'Rut Comprador' columns
-    data_with_market_ta_merged = data_with_market_ta.merge(mapping_data, left_on="Pactivo", right_on="Pactivo", how="left")
+    # data_with_market_ta_merged = data_with_market_ta.merge(mapping_data, left_on="Pactivo", right_on="Pactivo", how="left")
 
-    columns_to_drop = ['Rename Pactivo', 'Brand/Generic/Biosimilar Names', 'Keep (Y/N)', 'Match with pactivo', 'Match with Brand']
+    comprador_cenabast_df_market_or_ta = pd.read_excel('Control/Cenabast_Mapping.xlsx', sheet_name='Final Market Basket')
+    Rename_Pactivo_dict = {j.lower():i for i,j in comprador_cenabast_df_market_or_ta.drop_duplicates("Rename Pactivo")[['Market or TA','Rename Pactivo']].to_numpy()}
+    data_with_market_ta['Market or TA'] = data_with_market_ta['Pactivo'].str.lower().map(Rename_Pactivo_dict)
+    
+    print("Shape of data_with_market_ta_merged after merge: ", data_with_market_ta.shape)
+    
+    # columns_to_drop = ['Rename Pactivo', 'Brand/Generic/Biosimilar Names', 'Keep (Y/N)', 'Match with pactivo', 'Match with Brand']
 
-    # Drop the columns
-    data_with_market_ta_merged.drop(columns=columns_to_drop, inplace=True)
+    # # Drop the columns
+    # data_with_market_ta.drop(columns=columns_to_drop, inplace=True)
 
     #Rename Columns
-    data_with_market_ta_merged = data_with_market_ta_merged[["Orden de Compra", "Nombre producto genérico", "Nombre producto comercial","Comprador","Proveedor", "Pactivo", "Brand", "UnidadMedida","Presentación", "Cantidad unitaria", "Precio unitario neto", "Monto Neto", "Fecha de entrega", "Mes", "Año", "Market or TA", "Rut Comprador Formatted", "Comuna", "Rut_Proveedor","Segmento Comprador", "Nombre región", "N°Región", "Proveedor Asociado", "Intitución Destinataria Homologada"]]
+    data_with_market_ta_merged = data_with_market_ta[["Orden de Compra", "Nombre producto genérico", "Nombre producto comercial","Comprador","Proveedor", "Pactivo", "Brand", "UnidadMedida","Presentación", "Cantidad unitaria", "Precio unitario neto", "Monto Neto", "Fecha de entrega", "Mes", "Año", "Market or TA", "Rut Comprador Formatted", "Comuna", "Rut_Proveedor","Segmento Comprador", "Nombre región", "N°Región", "Proveedor Asociado", "Intitución Destinataria Homologada"]]
     columns_to_rename = {
             "Orden de Compra":"Codigo",
             "Nombre producto genérico":"EspecificacionComprador",
