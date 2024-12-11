@@ -157,7 +157,7 @@ def sucursal_matching(dataframe,ini_forget_time):
 
     final_df = final_df[["Codigo", "Link", "EspecificacionComprador", "EspecificacionProveedor","OrganismoPublico", "Razon_Social_Cliente","Sucursal_Proveedor", "Pactivo", "Brand", "Presentación", "cantidad", "precioNeto", "totalLineaNeto", "FechaEnvio", "Mes", "Month", "Year", "Market_or_TA", "RutUnidadCompra", "CiudadUnidadCompra", "RutSucursal", "sector","Instituciones", "RegionUnidadCompra", "Tipo", "CodigoLicitacion", "CorporacionesPHT"]]
    
-    Pharmatender_final_df = final_df.copy()
+    # Pharmatender_final_df = final_df.copy()
     
     month_column = 'Month'
 
@@ -220,8 +220,8 @@ def sucursal_matching(dataframe,ini_forget_time):
 
     final_data_merged['Pactivo'] = final_data_merged['Pactivo'].str.title()
 
-    final_data_merged = final_data_merged[["Codigo", "EspecificacionComprador", "EspecificacionProveedor","Comprador","Proveedor", "Pactivo", "Brand", "UnidadMedida","Presentación", "cantidad", "precioNeto", "totalLineaNeto", "FechaEnvio", "Mes", "Month", "Year", "Market_or_TA", "RutUnidadCompra", "Comuna", "RutSucursal","Instituciones", "Region", "Region_Number", "Proveedor Asociado"]]
-
+    final_data_merged = final_data_merged[["Codigo", "Link","EspecificacionComprador", "EspecificacionProveedor","Comprador","Proveedor", "Pactivo", "Brand", "UnidadMedida","Presentación", "cantidad", "precioNeto", "totalLineaNeto", "FechaEnvio", "Mes", "Month", "Year", "Market_or_TA", "RutUnidadCompra", "Comuna", "RutSucursal","Instituciones", "Region", "Region_Number", "Tipo", "CodigoLicitacion","Proveedor Asociado"]]
+    
     columns_to_rename = {
         'Comprador': 'Razon_Social_Cliente',
         'Comuna': 'CiudadUnidadCompra',
@@ -251,10 +251,17 @@ def sucursal_matching(dataframe,ini_forget_time):
     columns_to_convert = ['Razon_Social_Cliente', 'Sucursal_Proveedor', 'Pactivo', 'Brand','CiudadUnidadCompra','CorporacionesPHT','Pactivo+CorporacionesPHT']
     final_df_merged_desintaria[columns_to_convert] = final_df_merged_desintaria[columns_to_convert].apply(lambda x: x.str.title())
 
-    chile_combined_df = final_df_merged_desintaria 
+        
     
+    Pharmatender_final_df = final_df_merged_desintaria
+    Pharmatender_final_df = Pharmatender_final_df[["Codigo", "Link","EspecificacionComprador", "EspecificacionProveedor","Razon_Social_Cliente","Sucursal_Proveedor", "Pactivo", "Brand", "UnidadMedida","Presentación", "cantidad", "precioNeto", "totalLineaNeto", "Fecha", "Mes", "Month", "Year", "Market_or_TA", "RutUnidadCompra", "CiudadUnidadCompra", "RutSucursal","Instituciones", "Region", "Region_Number", "Tipo", "CodigoLicitacion","CorporacionesPHT","Pactivo+CorporacionesPHT", "Intitución Destinataria Homologada", "Origin"]]
+
+    chile_combined_df = final_df_merged_desintaria
+    chile_combined_df = chile_combined_df[["Codigo","EspecificacionComprador", "EspecificacionProveedor","Razon_Social_Cliente","Sucursal_Proveedor", "Pactivo", "Brand", "UnidadMedida","Presentación", "cantidad", "precioNeto", "totalLineaNeto", "Fecha", "Mes", "Month", "Year", "Market_or_TA", "RutUnidadCompra", "CiudadUnidadCompra", "RutSucursal","Instituciones", "Region", "Region_Number", "CorporacionesPHT","Pactivo+CorporacionesPHT", "Intitución Destinataria Homologada", "Origin"]]
+        
+        
     final_df_merged_desintaria = final_df_merged_desintaria[["Year", "Month", "Region", "CorporacionesPHT", "Pactivo", "totalLineaNeto", "Market_or_TA", "Mes", "Intitución Destinataria Homologada", "Pactivo+CorporacionesPHT", "Origin", "cantidad"]]
-    
+
     chile_combined_df['Fecha'] = pd.to_datetime(
                                 chile_combined_df['Fecha'], 
                                 format='%d-%m-%Y',  # Adjust format to match your date format
