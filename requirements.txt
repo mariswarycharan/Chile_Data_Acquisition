@@ -9,3 +9,4 @@ swifter==1.4.0
 fuzzywuzzy[speedup]==0.18.0
 mapply==0.1.26
 boto3
+gdown
