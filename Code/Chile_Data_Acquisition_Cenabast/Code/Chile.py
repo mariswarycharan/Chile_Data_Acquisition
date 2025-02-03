@@ -3,18 +3,32 @@ import os
 from tqdm import tqdm
 from Chile_Data_Acquisition_Cenabast.Code.part_1 import fuzzy_match_filtering
 from Chile_Data_Acquisition_Cenabast.Code.part_2 import Mapping_File_Format
-
-
 from datetime import datetime
+import gdown
+
+def download_google_sheet(url , Month):
+    try:
+        if not os.path.exists("temp"):
+            os.makedirs("temp")
+                
+        # Convert to direct download link
+        file_id = url.split('/d/')[1].split('/')[0]
+        direct_link = f'https://docs.google.com/uc?export=download&id={file_id}'
+        # Download the Google Sheet as CSV
+        gdown.download(direct_link, f'temp/{Month}.csv', quiet=False)
+        print(f'File downloaded successfully: {Month}.csv')
+    except Exception as e:
+        print(f'Error downloading google sheet: {e}')
 
 def Chile_Data_Acquisition_Cenabast_data(Url_Month_turple):
         
         Cenabast_File_Url , Month = Url_Month_turple
         
-        url = Cenabast_File_Url.split("edit")[0] + "export?format=xlsx"      
-        Month = int(str(Month).split("-")[1])
+        download_google_sheet(Cenabast_File_Url , Month)
                 
-        df = pd.read_excel(url)
+        df = pd.read_excel(f'temp/{Month}.csv')
+        
+        Month = int(str(Month).split("-")[1])
         
         filter_month_df = df[df['Mes'].isin([Month])]
         
