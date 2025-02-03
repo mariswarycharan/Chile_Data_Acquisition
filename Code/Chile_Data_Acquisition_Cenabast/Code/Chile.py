@@ -26,7 +26,7 @@ def Chile_Data_Acquisition_Cenabast_data(Url_Month_turple):
         
         download_google_sheet(Cenabast_File_Url , Month)
                 
-        df = pd.read_excel(f'temp/{Month}.csv')
+        df = pd.read_excel( "temp/" + Month + ".xlsx" )
         
         Month = int(str(Month).split("-")[1])
         
