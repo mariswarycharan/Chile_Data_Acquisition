@@ -14,9 +14,10 @@ def download_google_sheet(url , Month):
         # Convert to direct download link
         file_id = url.split('/d/')[1].split('/')[0]
         direct_link = f'https://docs.google.com/uc?export=download&id={file_id}'
-        # Download the Google Sheet as CSV
-        gdown.download(direct_link, f'temp/{Month}.csv', quiet=False)
-        print(f'File downloaded successfully: {Month}.csv')
+        # Download the Google Sheet as an Excel file
+        gdown.download(direct_link, 'temp/' + 'Cenabast_' + Month + '.xlsx', quiet=False)
+        print('File downloaded successfully : ' + "temp/" + 'Cenabast_' + Month + '.xlsx')
+        
     except Exception as e:
         print(f'Error downloading google sheet: {e}')
 
@@ -26,7 +27,7 @@ def Chile_Data_Acquisition_Cenabast_data(Url_Month_turple):
         
         download_google_sheet(Cenabast_File_Url , Month)
                 
-        df = pd.read_excel( "temp/" + Month + ".xlsx" )
+        df = pd.read_excel( "temp/"  + 'Cenabast_' + Month + '.xlsx')
         
         Month = int(str(Month).split("-")[1])
         
